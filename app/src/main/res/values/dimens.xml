@@ -9,4 +9,7 @@
     <dimen name="texts_16">16sp</dimen>
     <dimen name="top_21">21dp</dimen>
     <dimen name="height_61">61dp</dimen>
+    <dimen name="icon_24">24dp</dimen>
+    <dimen name="icon_30">30dp</dimen>
+    <dimen name="widht_300">300dp</dimen>
 </resources>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="304dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp">
+
+        <ImageView
+            android:id="@+id/back_main"
+            android:layout_width="27dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="@dimen/top_padding"
+            android:layout_marginTop="@dimen/top_padding"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/vector_strelochka" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/setting"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_button"></TextView>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_61"
+        android:layout_marginTop="28dp"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd="@dimen/top_21">
+
+        <TextView
+            android:layout_width="@dimen/widht_300"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_21"
+            android:text="@string/nitgh"
+            android:textColor="@color/black"
+            android:textSize="@dimen/texts_16"></TextView>
+
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/top_21"></Switch>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd="@dimen/top_21">
+
+        <TextView
+            android:layout_width="@dimen/widht_300"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_21"
+            android:gravity="start"
+            android:text="@string/to_share"
+            android:textColor="@color/black"
+            android:textSize="@dimen/texts_16"></TextView>
+
+        <ImageView
+            android:layout_width="@dimen/icon_24"
+            android:layout_height="@dimen/icon_24"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/top_21"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/vectorto_share" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd="@dimen/top_21"
+        android:textColor="@color/black">
+
+        <TextView
+            android:layout_width="@dimen/widht_300"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_21"
+            android:gravity="start"
+            android:text="@string/write_to"
+            android:textColor="@color/black"
+            android:textSize="@dimen/texts_16"></TextView>
+
+        <ImageView
+            android:layout_width="@dimen/icon_30"
+            android:layout_height="@dimen/icon_30"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/top_21"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/group" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd="@dimen/top_21">
+
+        <TextView
+            android:layout_width="@dimen/widht_300"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_21"
+            android:gravity="start"
+            android:text="@string/agreement"
+            android:textColor="@color/black"
+            android:textSize="@dimen/texts_16"></TextView>
+
+        <ImageView
+            android:layout_width="@dimen/icon_24"
+            android:layout_height="@dimen/icon_24"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/top_21"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/vector_agreement" />
+    </FrameLayout>
+</LinearLayout>
