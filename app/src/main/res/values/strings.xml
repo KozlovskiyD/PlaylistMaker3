@@ -11,4 +11,5 @@
     <string name="massageSubject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="uriDeveloper">https://practicum.yandex.ru/android-developer/</string>
     <string name="uriAgreement">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="myEmail">dmitr-nik.k@yandex.ru</string>
 </resources>

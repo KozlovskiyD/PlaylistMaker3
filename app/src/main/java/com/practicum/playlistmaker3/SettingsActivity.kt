@@ -32,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
              val massageSubject = getString(R.string.massageSubject)
              val writeToIntent = Intent(Intent.ACTION_SENDTO)
              writeToIntent.data = Uri.parse("mailto:")
-             writeToIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("dmitr-nik.k@yandex.ru"))
+             writeToIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("myEmail"))
              writeToIntent.putExtra(Intent.EXTRA_SUBJECT, massageSubject)
              writeToIntent.putExtra(Intent.EXTRA_TEXT, massage)
              startActivity(writeToIntent)
