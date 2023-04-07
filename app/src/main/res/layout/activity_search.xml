@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:theme="@style/Theme.PlaylistMaker"
     android:background="?attr/colorSecondary"
     android:paddingHorizontal="@dimen/top_padding"
@@ -19,55 +20,65 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
-        android:src="@drawable/vector_strelochka"
+        android:src="@drawable/vector_the_arrow"
         android:contentDescription="@string/setting"/>
 
     <TextView
         style="@style/headingText"
-        android:layout_marginStart = "@dimen/top_28"
-        android:text="@string/search">
-    </TextView>
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:layout_marginTop = "@dimen/top_padding"
+        android:layout_marginStart = "40dp"
+        android:text="@string/search"/>
 
     </androidx.appcompat.widget.Toolbar>
 
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <EditText
         android:id="@+id/inputEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        android:fontFamily="@font/ys_display_regular"
-        android:textFontWeight="400"
-        android:textSize="@dimen/texts_16"
-        android:paddingStart="16dp"
+        android:layout_marginVertical="@dimen/top_8"
         android:background="@drawable/rounded_edittext"
         android:drawableStart="@drawable/vector_search"
-        android:drawableTint="@color/gray"
-        android:drawablePadding="8dp"
-        android:textCursorDrawable="@null"
+        android:drawablePadding="@dimen/top_8"
+        android:fontFamily="@font/ys_display_regular"
         android:hint="@string/search"
         android:inputType="text"
         android:maxLength="100"
         android:maxLines="1"
         android:minHeight="48dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray">
-    </EditText>
+        android:paddingStart="@dimen/top_padding"
+        android:textColor="@color/black_icon"
+        android:textColorHint="?attr/colorPrimary"
+        android:textCursorDrawable="@null"
+        android:textFontWeight="400"
+        android:textSize="@dimen/texts_16"
+        tools:ignore="TextContrastCheck"
+        android:autofillHints="" />
 
     <ImageView
         android:id="@+id/clearIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
         android:layout_gravity="end"
-        android:layout_marginVertical="16dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:fillColor="@color/black"
-        android:visibility="gone">
-    </ImageView>
+        android:layout_marginVertical="@dimen/top_24"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/vector_cross"
+        android:visibility="gone"
+        tools:ignore="ContentDescription,ImageContrastCheck" />
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/TrackList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/top_padding"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </LinearLayout>
 

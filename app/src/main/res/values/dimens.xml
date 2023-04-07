@@ -11,4 +11,5 @@
     <dimen name="top_4">4dp</dimen>
     <dimen name="top_22">22dp</dimen>
     <dimen name="top_28">28dp</dimen>
+    <dimen name="top_8">8dp</dimen>
 </resources>

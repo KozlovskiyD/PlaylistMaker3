@@ -20,27 +20,32 @@
             android:layout_marginStart="@dimen/top_padding"
             android:layout_marginTop="@dimen/top_padding"
             android:backgroundTint="@color/white"
-            android:src="@drawable/vector_strelochka"
+            android:src="@drawable/vector_the_arrow"
             android:contentDescription="@string/setting"/>
 
         <TextView
             style="@style/headingText"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:layout_marginTop = "@dimen/top_padding"
             android:layout_marginStart = "@dimen/top_28"
-            android:text="@string/setting">
-
-        </TextView>
+            android:text="@string/setting"/>
 
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
-        style="@style/layout_lists"
-        android:layout_marginTop="28dp">
+        android:layout_width = "match_parent"
+        android:layout_height = "@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd = "@dimen/top_24"
+        android:layout_marginTop="@dimen/top_28">
 
         <TextView
             style="@style/MessageTextStyle"
-            android:text="@string/nitgh">
-
-        </TextView>
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nitgh"/>
 
         <Switch
             android:id="@+id/switch1"
@@ -56,34 +61,46 @@
     </FrameLayout>
 
     <FrameLayout
-        style="@style/layout_lists">
+        android:layout_width = "match_parent"
+        android:layout_height = "@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd = "@dimen/top_24">
 
         <TextView
             style="@style/MessageTextStyle"
-            android:text="@string/to_share">
-
-        </TextView>
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to_share"/>
 
         <ImageView
             android:id="@+id/shar"
             style="@style/vectors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/to_share"
-            android:src="@drawable/vectorto_share"
+            android:src="@drawable/vector_to_share"
             tools:ignore="ImageContrastCheck" />
     </FrameLayout>
 
     <FrameLayout
-        style="@style/layout_lists">
+        android:layout_width = "match_parent"
+        android:layout_height = "@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd = "@dimen/top_24">
 
         <TextView
             style="@style/MessageTextStyle"
-            android:text="@string/write_to">
-
-        </TextView>
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/write_to"/>
 
         <ImageView
             android:id="@+id/write_to"
             style="@style/vectors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/write_to"
             android:src="@drawable/group"
             tools:ignore="ImageContrastCheck" />
@@ -91,17 +108,23 @@
     </FrameLayout>
 
     <FrameLayout
-        style="@style/layout_lists">
+        android:layout_width = "match_parent"
+        android:layout_height = "@dimen/height_61"
+        android:paddingStart="@dimen/top_padding"
+        android:paddingEnd = "@dimen/top_24">
 
         <TextView
             style="@style/MessageTextStyle"
-            android:text="@string/agreement">
-
-        </TextView>
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement"/>
 
         <ImageView
             android:id="@+id/user_agreement"
             style="@style/vectors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/agreement"
             android:src="@drawable/vector_agreement"
             tools:ignore="ImageContrastCheck" />
