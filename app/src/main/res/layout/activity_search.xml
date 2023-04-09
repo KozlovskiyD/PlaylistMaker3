@@ -23,19 +23,19 @@
         android:src="@drawable/vector_the_arrow"
         android:contentDescription="@string/setting"/>
 
-    <TextView
-        style="@style/headingText"
+        <TextView
+            style="@style/headingText"
         android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+        android:layout_height = "match_parent"
         android:layout_marginTop = "@dimen/top_padding"
-        android:layout_marginStart = "40dp"
+        android:layout_marginStart = "@dimen/top_40"
         android:text="@string/search"/>
 
     </androidx.appcompat.widget.Toolbar>
 
 <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <EditText
         android:id="@+id/inputEditText"
@@ -62,8 +62,8 @@
 
     <ImageView
         android:id="@+id/clearIcon"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
+        android:layout_width="@dimen/top_14"
+        android:layout_height="@dimen/top_14"
         android:layout_gravity="end"
         android:layout_marginVertical="@dimen/top_24"
         android:layout_marginEnd="12dp"
@@ -74,7 +74,7 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/TrackList"
+        android:id="@+id/trackList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/top_padding"

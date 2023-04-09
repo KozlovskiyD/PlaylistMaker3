@@ -46,10 +46,10 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.addTextChangedListener(simpleTextWatcher)
 
         val trackListAdapter = TrackListAdapter(
-            List(5){ Tract( trackNames[it], artistNames[it], trackTimes[it], artworkUrls[it] ) })
+            List(5){ Tract( trackList[it], trackList[it+5], trackList[it+10], trackList[it+15] ) })
 
-        val rvTractList = findViewById<RecyclerView>(R.id.TrackList)
-        rvTractList.adapter = trackListAdapter
+        val rvTrackList = findViewById<RecyclerView>(R.id.trackList)
+        rvTrackList.adapter = trackListAdapter
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -73,10 +73,10 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
-        val trackNames = listOf("Smells Like Teen Spirit", "Billie Jean", "Stayin' Alive", "Whole Lotta Love", "Sweet Child O'Mine")
-        val artistNames = listOf("Nirvana", "Michael Jackson", "Bee Gees", "Led Zeppelin", "Guns N' Roses")
-        val trackTimes = listOf("5:01", "4:35", "4:10", "5:33", "5:03")
-        val artworkUrls= listOf(
+        val trackList = listOf(
+            "Smells Like Teen Spirit", "Billie Jean", "Stayin' Alive", "Whole Lotta Love", "Sweet Child O'Mine",
+            "Nirvana", "Michael Jackson", "Bee Gees", "Led Zeppelin", "Guns N' Roses",
+            "5:01", "4:35", "4:10", "5:33", "5:03",
             "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg",
             "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg",
             "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg",

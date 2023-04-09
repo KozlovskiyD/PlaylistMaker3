@@ -7,7 +7,7 @@
     android:background="?attr/colorOnSecondary"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/top_padding"
-    android:paddingBottom="28dp">
+    android:paddingBottom="@dimen/top_28">
 
     <TextView
         style="@style/headingText"
@@ -22,9 +22,9 @@
         android:id="@+id/search_button"
         style="@style/main_button"
         android:layout_width="match_parent"
-        android:layout_height = "0dp"
+        android:layout_height = "@dimen/layout_height"
         android:layout_weight = "1"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/top_40"
         android:text="@string/search"
         app:icon="@drawable/vector_search"/>
 
@@ -32,7 +32,7 @@
         android:id="@+id/media_button"
         style="@style/main_button"
         android:layout_width="match_parent"
-        android:layout_height = "0dp"
+        android:layout_height = "@dimen/layout_height"
         android:layout_weight = "1"
         android:layout_marginTop="@dimen/top_padding"
         android:text="@string/media"
@@ -42,7 +42,7 @@
         android:id="@+id/setting_button"
         style="@style/main_button"
         android:layout_width="match_parent"
-        android:layout_height = "0dp"
+        android:layout_height = "@dimen/layout_height"
         android:layout_weight = "1"
         android:layout_marginTop="@dimen/top_padding"
         android:text="@string/setting"
