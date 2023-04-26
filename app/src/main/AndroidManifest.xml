@@ -10,6 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:usesCleartextTraffic="true"
         tools:targetApi="28">
         <activity
             android:name=".MediaActivity"

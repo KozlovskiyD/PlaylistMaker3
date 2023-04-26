@@ -50,13 +50,15 @@
         android:inputType="text"
         android:maxLength="100"
         android:maxLines="1"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/top_48"
         android:paddingStart="@dimen/top_padding"
         android:textColor="@color/black_icon"
         android:textColorHint="?attr/colorPrimary"
         android:textCursorDrawable="@null"
         android:textFontWeight="400"
         android:textSize="@dimen/texts_16"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
         tools:ignore="TextContrastCheck"
         android:autofillHints="" />
 
@@ -66,7 +68,7 @@
         android:layout_height="@dimen/top_14"
         android:layout_gravity="end"
         android:layout_marginVertical="@dimen/top_24"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="@dimen/top_12"
         android:src="@drawable/vector_cross"
         android:visibility="gone"
         tools:ignore="ContentDescription,ImageContrastCheck" />
@@ -79,6 +81,32 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/top_padding"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    <ImageView
+    android:id="@+id/image_error"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="110dp"
+    android:layout_gravity="center"/>
+
+    <TextView
+        style="@style/searchText"
+        android:id="@+id/errorMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_padding"
+        android:layout_gravity="center"
+        android:textAlignment="center" />
+
+    <Button
+        style="@style/update_button"
+        android:id="@+id/update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_24"
+        android:layout_gravity="center"
+        android:text="@string/update"
+        android:visibility="gone" />
 
 </LinearLayout>
 
