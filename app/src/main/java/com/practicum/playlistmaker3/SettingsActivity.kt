@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Switch
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 
 class SettingsActivity : AppCompatActivity() {
@@ -19,38 +18,40 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val switchNight = findViewById<Switch>(R.id.switch1)
+        val switchNight = this.findViewById<Switch>(R.id.switch1)
         switchNight.setOnCheckedChangeListener{ _, isChecked ->
             if (switchNight.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
         }
 
-        val buttonShared = findViewById<ImageView>(R.id.write_to)
-         buttonShared.setOnClickListener {
-             val massage = getString (R.string.massage)
-             val massageSubject = getString(R.string.massageSubject)
-             val writeToIntent = Intent(Intent.ACTION_SENDTO)
-             writeToIntent.data = Uri.parse("mailto:")
-             writeToIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("myEmail"))
-             writeToIntent.putExtra(Intent.EXTRA_SUBJECT, massageSubject)
-             writeToIntent.putExtra(Intent.EXTRA_TEXT, massage)
-             startActivity(writeToIntent)
+        val buttonShare = findViewById<ImageView>(R.id.write_to)
+         buttonShare.setOnClickListener {
+             Intent(Intent.ACTION_SENDTO).apply {
+                 val message = this@SettingsActivity.getString (R.string.message)
+                 val messageSubject = this@SettingsActivity.getString(R.string.messageSubject)
+                 data = Uri.parse("mailto:")
+                 putExtra(Intent.EXTRA_EMAIL, arrayOf("myEmail"))
+                 putExtra(Intent.EXTRA_SUBJECT, messageSubject)
+                 putExtra(Intent.EXTRA_TEXT, message)
+                 startActivity(this)
+             }
          }
 
         val buttonWriteTo = findViewById<ImageView>(R.id.shar)
         buttonWriteTo.setOnClickListener {
-            val massage = getString(R.string.uriDeveloper)
-            val sharIntent = Intent(Intent.ACTION_SEND)
-            sharIntent.setType("text/plain")
-            sharIntent.putExtra(Intent.EXTRA_TEXT, massage)
-            startActivity(sharIntent)
+            Intent(Intent.ACTION_SEND).apply {
+                val message = getString(R.string.uriDeveloper)
+                setType("text/plain")
+                putExtra(Intent.EXTRA_TEXT, message)
+                startActivity(this)
+            }
         }
 
         val buttonUserAgreement = findViewById<ImageView>(R.id.user_agreement)
         buttonUserAgreement.setOnClickListener{
-            val massage = getString(R.string.uriAgreement)
-            val urlUserAgreement = Uri.parse(massage)
+            val message = getString(R.string.uriAgreement)
+            val urlUserAgreement = Uri.parse(message)
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, urlUserAgreement)
             startActivity(userAgreementIntent)
         }
