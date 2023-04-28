@@ -19,7 +19,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    val modelTrack = ArrayList<Track>()
     private lateinit var errorMessage: TextView
     private lateinit var clearButton: ImageView
     private lateinit var imageError: ImageView
@@ -45,19 +44,20 @@ class SearchActivity : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-
+        trackListAdapter = TrackListAdapter()
         errorMessage = findViewById(R.id.errorMessage)
         clearButton = findViewById(R.id.clearIcon)
         updateButton = findViewById(R.id.update_button)
         inputEditText = findViewById(R.id.inputEditText)
         imageError = findViewById(R.id.image_error)
         rvTrackList = findViewById(R.id.trackList)
+        rvTrackList.adapter = trackListAdapter
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
-            modelTrack.clear()
+            trackListAdapter.setTracks(null)
             hideTheKeyboard(clearButton)
-            rvTrackList.visibility = View.GONE
+
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -75,9 +75,6 @@ class SearchActivity : AppCompatActivity() {
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        trackListAdapter = TrackListAdapter(modelTrack)
-        rvTrackList.adapter = trackListAdapter
-
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 request()
@@ -93,61 +90,41 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<DataTrackResponse>,
                     response: Response<DataTrackResponse>
                 ) {
-                    if (response.code() == 200) {
-                        modelTrack.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            modelTrack.addAll(response.body()?.results!!)
-                            trackListAdapter.notifyDataSetChanged()
-                            rvTrackList.visibility = View.VISIBLE
-                            imageError.visibility = View.GONE
-                        }
-                        if (modelTrack.isEmpty()) {
-                            showMessage(getString(R.string.not_found), "")
-                            imageError.setImageResource(drawable.vector_not_found)
-                            imageError.visibility = View.VISIBLE
-                            updateButton.visibility = View.GONE
-                        } else {
-                            showMessage("", "")
-                        }
+                    if ((response.code() == 200) and (response.body()?.results?.isNotEmpty() == true)) {
+                        trackListAdapter.setTracks(response.body()?.results!!)
+                        rvTrackList.visibility = View.VISIBLE
+                        imageError.visibility = View.GONE
+                        errorMessage.visibility = View.GONE
+                        updateButton.visibility = View.GONE
                     } else {
-                        showMessage(
-                            getString(R.string.not_found),
-                            response.code().toString()
-                        )
+                        showMessage()
                         imageError.setImageResource(drawable.vector_not_found)
-                        imageError.visibility = View.VISIBLE
+                        errorMessage.text = getString(R.string.not_found)
                         updateButton.visibility = View.GONE
                     }
                 }
-
-                override fun onFailure(call: Call<DataTrackResponse>, t: Throwable) {
-                    showMessage(getString(R.string.no_signal), t.message.toString())
-                    imageError.setImageResource(drawable.vector_no_signal)
-                    imageError.visibility = View.VISIBLE
-                    updateButton.visibility = View.VISIBLE
-                    updateButton.setOnClickListener {
-                        request()
+                    override fun onFailure(call: Call<DataTrackResponse>, t: Throwable) {
+                        showMessage()
+                        val  additionalMessage = t.message.toString()
+                        imageError.setImageResource(drawable.vector_no_signal)
+                        errorMessage.text = getString(R.string.no_signal)
+                        updateButton.visibility = View.VISIBLE
+                        if (additionalMessage.isNotEmpty()){
+                            Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG).show()
+                            }
+                        updateButton.setOnClickListener {
+                            request()
+                        }
                     }
-                }
             })
         true
     }
-
-    private fun showMessage(text: String, additionalMessage: String) {
-        if (text.isNotEmpty()) {
-            modelTrack.clear()
-            errorMessage.visibility = View.VISIBLE
-            trackListAdapter.notifyDataSetChanged()
-            errorMessage.text = text
-            if (additionalMessage.isNotEmpty()) {
-                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG).show()
-            }
-        } else {
-            errorMessage.visibility = View.GONE
-            updateButton.visibility = View.GONE
-        }
+    private fun showMessage() {
+        trackListAdapter.setTracks(null)
+        imageError.visibility = View.VISIBLE
+        errorMessage.visibility = View.VISIBLE
+        rvTrackList.visibility = View.GONE
     }
-
     private fun clearButtonVisibility(s: CharSequence?) {
         return if (s.isNullOrEmpty()) {
             clearButton.visibility = View.GONE

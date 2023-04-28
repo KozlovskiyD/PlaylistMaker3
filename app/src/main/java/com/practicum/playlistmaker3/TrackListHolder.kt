@@ -24,9 +24,9 @@ class TrackListViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         Glide
             .with(itemView)
             .load(model.artworkUrl100)
-            .placeholder(R.drawable.ic_launcher_foreground)
+            .placeholder(R.drawable.vector_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(10))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.top_2)))
             .into(imageTracks)
 
         tvTractName.text = model.trackName
