@@ -43,7 +43,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackServer = retrofit.create(Itunes::class.java)
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -109,7 +109,7 @@ class SearchActivity : AppCompatActivity() {
     private fun listYouSearch() {
         val loadTrack = sharedPrefs.getString(KEY, "")
         if (loadTrack != "") {
-            var gson = Gson().fromJson(loadTrack, ArrayList<Track>()::class.java)
+            val gson = Gson().fromJson(loadTrack, ArrayList<Track>()::class.java)
             saveListAdapter.setTracks(gson)
         }
     }
