@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker3
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.practicum.playlistmaker3.R.drawable
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,15 +19,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
+const val DATA = "data"
+const val KEY = "key"
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var errorMessage: TextView
     private lateinit var clearButton: ImageView
     private lateinit var imageError: ImageView
     private lateinit var updateButton: Button
-    private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var inputEditText: EditText
     private lateinit var rvTrackList: RecyclerView
+    private lateinit var youSearch: LinearLayout
+    private lateinit var rvSearchList: RecyclerView
+    private lateinit var trackListAdapter: TrackListAdapter
+    private lateinit var saveListAdapter:TrackListAdapter
+    private lateinit var sharedPrefs : SharedPreferences
 
     private val baseUrl = "http://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -45,19 +53,32 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
         trackListAdapter = TrackListAdapter()
+        saveListAdapter = TrackListAdapter()
+        sharedPrefs  = getSharedPreferences(DATA, MODE_PRIVATE)
         errorMessage = findViewById(R.id.errorMessage)
         clearButton = findViewById(R.id.clearIcon)
         updateButton = findViewById(R.id.update_button)
         inputEditText = findViewById(R.id.inputEditText)
         imageError = findViewById(R.id.image_error)
         rvTrackList = findViewById(R.id.trackList)
+        youSearch = findViewById(R.id.you_search)
+        rvSearchList = findViewById(R.id.save_list)
+
         rvTrackList.adapter = trackListAdapter
+        rvSearchList.adapter = saveListAdapter
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
             trackListAdapter.setTracks(null)
             hideTheKeyboard(clearButton)
+        }
 
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            youSearch.visibility =
+                if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
+            rvTrackList.visibility =
+                if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
+                if (youSearch.visibility == View.VISIBLE) listYouSearch()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -66,6 +87,8 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                youSearch.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                rvTrackList.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
                 clearButtonVisibility(s)
             }
 
@@ -80,6 +103,14 @@ class SearchActivity : AppCompatActivity() {
                 request()
             }
             false
+        }
+    }
+
+    private fun listYouSearch() {
+        val loadTrack = sharedPrefs.getString(KEY, "")
+        if (loadTrack != "") {
+            var gson = Gson().fromJson(loadTrack, ArrayList<Track>()::class.java)
+            saveListAdapter.setTracks(gson)
         }
     }
 
@@ -125,6 +156,16 @@ class SearchActivity : AppCompatActivity() {
         errorMessage.visibility = View.VISIBLE
         rvTrackList.visibility = View.GONE
     }
+
+    private var  write = ArrayList<Track>()
+     fun saveHistory(saveTrack: Track){
+         write.add(saveTrack)
+         val json = Gson().toJson(write)
+         sharedPrefs.edit()
+             .putString(KEY, json.toString())
+             .apply()
+    }
+
     private fun clearButtonVisibility(s: CharSequence?) {
         return if (s.isNullOrEmpty()) {
             clearButton.visibility = View.GONE
