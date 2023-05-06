@@ -2,10 +2,11 @@ package com.practicum.playlistmaker3
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Switch
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 
 class SettingsActivity : AppCompatActivity() {
@@ -19,26 +20,28 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val switchNight = this.findViewById<Switch>(R.id.switch1)
-        switchNight.setOnCheckedChangeListener{ _, isChecked ->
+        switchNight.setOnCheckedChangeListener { _, isChecked ->
             if (switchNight.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
-        val buttonShare = findViewById<ImageView>(R.id.write_to)
-         buttonShare.setOnClickListener {
-             Intent(Intent.ACTION_SENDTO).apply {
-                 val message = this@SettingsActivity.getString (R.string.message)
-                 val messageSubject = this@SettingsActivity.getString(R.string.messageSubject)
-                 data = Uri.parse("mailto:")
-                 putExtra(Intent.EXTRA_EMAIL, arrayOf("myEmail"))
-                 putExtra(Intent.EXTRA_SUBJECT, messageSubject)
-                 putExtra(Intent.EXTRA_TEXT, message)
-                 startActivity(this)
-             }
-         }
+        val buttonShare = findViewById<FrameLayout>(R.id.write_to)
+        buttonShare.setOnClickListener {
+            Intent(Intent.ACTION_SENDTO).apply {
+                val message = this@SettingsActivity.getString(R.string.message)
+                val messageSubject = this@SettingsActivity.getString(R.string.messageSubject)
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("myEmail"))
+                putExtra(Intent.EXTRA_SUBJECT, messageSubject)
+                putExtra(Intent.EXTRA_TEXT, message)
+                startActivity(this)
+            }
+        }
 
-        val buttonWriteTo = findViewById<ImageView>(R.id.shar)
+        val buttonWriteTo = findViewById<FrameLayout>(R.id.shar)
         buttonWriteTo.setOnClickListener {
             Intent(Intent.ACTION_SEND).apply {
                 val message = getString(R.string.uriDeveloper)
@@ -48,8 +51,8 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        val buttonUserAgreement = findViewById<ImageView>(R.id.user_agreement)
-        buttonUserAgreement.setOnClickListener{
+        val buttonUserAgreement = findViewById<FrameLayout>(R.id.user_agreement)
+        buttonUserAgreement.setOnClickListener {
             val message = getString(R.string.uriAgreement)
             val urlUserAgreement = Uri.parse(message)
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, urlUserAgreement)

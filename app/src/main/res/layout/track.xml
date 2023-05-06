@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/top_56"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="@dimen/top_34"
         android:layout_marginEnd="@dimen/top_28"
         android:orientation="horizontal" >
 
