@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker3.R.drawable
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,6 +28,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearButton: ImageView
     private lateinit var imageError: ImageView
     private lateinit var updateButton: Button
+    private lateinit var clearHistory: Button
     private lateinit var inputEditText: EditText
     private lateinit var rvTrackList: RecyclerView
     private lateinit var youSearch: LinearLayout
@@ -34,6 +36,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var saveListAdapter:TrackListAdapter
     private lateinit var sharedPrefs : SharedPreferences
+
+    private var listSave: MutableList<Track> = mutableListOf()
+    private var listHistory: ArrayList<Track> = arrayListOf()
+    var youSearchClear: Boolean = false
 
     private val baseUrl = "http://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -43,29 +49,32 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackServer = retrofit.create(Itunes::class.java)
 
-    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation", "CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        sharedPrefs  = getSharedPreferences(DATA, MODE_PRIVATE)
 
         val buttonBack = findViewById<ImageView>(R.id.back_main)
         buttonBack.setOnClickListener {
             finish()
         }
-        trackListAdapter = TrackListAdapter()
-        saveListAdapter = TrackListAdapter()
-        sharedPrefs  = getSharedPreferences(DATA, MODE_PRIVATE)
+        trackListAdapter = TrackListAdapter(sharedPrefs)
+        saveListAdapter = TrackListAdapter(sharedPrefs)
         errorMessage = findViewById(R.id.errorMessage)
         clearButton = findViewById(R.id.clearIcon)
         updateButton = findViewById(R.id.update_button)
+        clearHistory = findViewById(R.id.clear_history)
         inputEditText = findViewById(R.id.inputEditText)
         imageError = findViewById(R.id.image_error)
         rvTrackList = findViewById(R.id.trackList)
         youSearch = findViewById(R.id.you_search)
-        rvSearchList = findViewById(R.id.save_list)
+       rvSearchList = findViewById(R.id.save_list)
 
         rvTrackList.adapter = trackListAdapter
         rvSearchList.adapter = saveListAdapter
+
+        loadHistory()
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -73,12 +82,24 @@ class SearchActivity : AppCompatActivity() {
             hideTheKeyboard(clearButton)
         }
 
+        clearHistory.setOnClickListener{
+            saveListAdapter.setTracks(null)
+            sharedPrefs.edit().clear().apply()
+           youSearchClear = false
+            youSearch.visibility = View.GONE
+            rvTrackList.visibility = View.VISIBLE
+        }
+
+        sharedPrefs.registerOnSharedPreferenceChangeListener { sharedPrefs, KEY ->
+           loadHistory()
+        }
+
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             youSearch.visibility =
-                if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
+                if (hasFocus && youSearchClear && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
             rvTrackList.visibility =
                 if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
-                if (youSearch.visibility == View.VISIBLE) listYouSearch()
+
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -87,9 +108,8 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                youSearch.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
-                rvTrackList.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
                 clearButtonVisibility(s)
+                listsVisibility(s)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -103,14 +123,6 @@ class SearchActivity : AppCompatActivity() {
                 request()
             }
             false
-        }
-    }
-
-    private fun listYouSearch() {
-        val loadTrack = sharedPrefs.getString(KEY, "")
-        if (loadTrack != "") {
-            val gson = Gson().fromJson(loadTrack, ArrayList<Track>()::class.java)
-            saveListAdapter.setTracks(gson)
         }
     }
 
@@ -157,13 +169,33 @@ class SearchActivity : AppCompatActivity() {
         rvTrackList.visibility = View.GONE
     }
 
-    private var  write = ArrayList<Track>()
-     fun saveHistory(saveTrack: Track){
-         write.add(saveTrack)
-         val json = Gson().toJson(write)
+    private fun loadHistory(){
+        val loadGson = sharedPrefs.getString(KEY, "")
+        if (loadGson != "") {
+            listHistory = Gson().fromJson(loadGson, object : TypeToken<ArrayList<Track>>(){}.type)
+            saveListAdapter.setTracks(listHistory)
+            youSearchClear = true
+        }
+    }
+
+     fun saveHistory(sharedPrefs: SharedPreferences, saveTrack: Track){
+         var indexTrack = 10
+          for (item in listSave) {
+            if (item.trackId == saveTrack.trackId)   indexTrack = (listSave.indexOf(item))
+        }
+         if (indexTrack < 10) listSave.removeAt(indexTrack)
+        if (listSave.size >= 10) listSave.removeAt(index = 9)
+        listSave.add(0, saveTrack)
+        val json = Gson().toJson(listSave)
          sharedPrefs.edit()
              .putString(KEY, json.toString())
              .apply()
+     }
+
+    private fun listsVisibility(s: CharSequence?){
+        if (youSearchClear && s?.isEmpty() == true) loadHistory()
+        youSearch.visibility = if (youSearchClear && s?.isEmpty() == true) View.VISIBLE else View.GONE
+        rvTrackList.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
     }
 
     private fun clearButtonVisibility(s: CharSequence?) {

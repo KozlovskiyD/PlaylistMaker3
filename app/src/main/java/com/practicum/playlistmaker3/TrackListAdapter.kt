@@ -1,13 +1,14 @@
 package com.practicum.playlistmaker3
 
-import android.util.Log
+import android.content.SharedPreferences
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackListAdapter() :
-    RecyclerView.Adapter<TrackListViewHolder>() {
 
-    private val tracks = ArrayList<Track>()
+class TrackListAdapter(private val sharedPrefs: SharedPreferences) :
+    RecyclerView.Adapter<TrackListViewHolder>() {
+    private var tracks = mutableListOf<Track>()
+    private val searchActivity = SearchActivity()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder =
         TrackListViewHolder(parent)
@@ -15,11 +16,7 @@ class TrackListAdapter() :
     override fun onBindViewHolder(holder: TrackListViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
-            val saveTrack = tracks[position]
-            Log.e("TAG", saveTrack.toString())
-             SearchActivity().also {
-                it.saveHistory(saveTrack)
-            }
+            searchActivity.saveHistory(sharedPrefs, tracks[position])
         }
     }
 
@@ -34,4 +31,5 @@ class TrackListAdapter() :
         }
         notifyDataSetChanged()
     }
+
 }

@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker3
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 
 class SettingsActivity : AppCompatActivity() {
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -45,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         buttonWriteTo.setOnClickListener {
             Intent(Intent.ACTION_SEND).apply {
                 val message = getString(R.string.uriDeveloper)
-                setType("text/plain")
+                type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, message)
                 startActivity(this)
             }

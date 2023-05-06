@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker3
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,9 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         val buttonSearch = findViewById<Button>(R.id.search_button)
         buttonSearch.setOnClickListener {
-            Intent(this, SearchActivity::class.java).apply {
-                startActivity(this)
-            }
+            Intent(this, SearchActivity::class.java).apply { startActivity(this) }
         }
 
         val buttonMedia = findViewById<Button>(R.id.media_button)

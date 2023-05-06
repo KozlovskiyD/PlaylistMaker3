@@ -90,7 +90,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:layout_marginTop="110dp" />
+        android:layout_marginTop="110dp"
+        android:contentDescription="@string/app_name" />
 
     <TextView
         android:id="@+id/errorMessage"
@@ -134,7 +135,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/top_24"
-            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         <Button
