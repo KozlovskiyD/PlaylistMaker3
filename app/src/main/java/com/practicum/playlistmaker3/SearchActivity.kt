@@ -19,9 +19,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-const val DATA = "data"
-const val KEY = "key"
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var errorMessage: TextView
@@ -34,12 +31,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var youSearch: LinearLayout
     private lateinit var rvSearchList: RecyclerView
     private lateinit var trackListAdapter: TrackListAdapter
-    private lateinit var saveListAdapter:TrackListAdapter
-    private lateinit var sharedPrefs : SharedPreferences
+    private lateinit var saveListAdapter: TrackListAdapter
+    private lateinit var sharedPrefs: SharedPreferences
 
-    private var listSave: MutableList<Track> = mutableListOf()
     private var listHistory: ArrayList<Track> = arrayListOf()
-    var youSearchClear: Boolean = false
+    private var youSearchClear = false
 
     private val baseUrl = "http://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -53,12 +49,8 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        sharedPrefs  = getSharedPreferences(DATA, MODE_PRIVATE)
 
-        val buttonBack = findViewById<ImageView>(R.id.back_main)
-        buttonBack.setOnClickListener {
-            finish()
-        }
+        sharedPrefs = getSharedPreferences(DATA, MODE_PRIVATE)
         trackListAdapter = TrackListAdapter(sharedPrefs)
         saveListAdapter = TrackListAdapter(sharedPrefs)
         errorMessage = findViewById(R.id.errorMessage)
@@ -69,12 +61,14 @@ class SearchActivity : AppCompatActivity() {
         imageError = findViewById(R.id.image_error)
         rvTrackList = findViewById(R.id.trackList)
         youSearch = findViewById(R.id.you_search)
-       rvSearchList = findViewById(R.id.save_list)
+        rvSearchList = findViewById(R.id.save_list)
 
-        rvTrackList.adapter = trackListAdapter
         rvSearchList.adapter = saveListAdapter
 
-        loadHistory()
+        val buttonBack = findViewById<ImageView>(R.id.back_main)
+        buttonBack.setOnClickListener {
+            finish()
+        }
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -82,19 +76,20 @@ class SearchActivity : AppCompatActivity() {
             hideTheKeyboard(clearButton)
         }
 
-        clearHistory.setOnClickListener{
+        clearHistory.setOnClickListener {
             saveListAdapter.setTracks(null)
             sharedPrefs.edit().clear().apply()
-           youSearchClear = false
+            youSearchClear = false
             youSearch.visibility = View.GONE
             rvTrackList.visibility = View.VISIBLE
         }
 
-        sharedPrefs.registerOnSharedPreferenceChangeListener { sharedPrefs, KEY ->
-           loadHistory()
+        sharedPrefs.registerOnSharedPreferenceChangeListener { _, _ ->
+            loadHistory()
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            loadHistory()
             youSearch.visibility =
                 if (hasFocus && youSearchClear && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
             rvTrackList.visibility =
@@ -108,6 +103,9 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.isEmpty() == true) {
+                    loadHistory()
+                }
                 clearButtonVisibility(s)
                 listsVisibility(s)
             }
@@ -134,7 +132,10 @@ class SearchActivity : AppCompatActivity() {
                     response: Response<DataTrackResponse>
                 ) {
                     if ((response.code() == 200) and (response.body()?.results?.isNotEmpty() == true)) {
+                        trackListAdapter = TrackListAdapter(sharedPrefs)
+                        trackListAdapter.currentLists(true)
                         trackListAdapter.setTracks(response.body()?.results!!)
+                        rvTrackList.adapter = trackListAdapter
                         rvTrackList.visibility = View.VISIBLE
                         imageError.visibility = View.GONE
                         errorMessage.visibility = View.GONE
@@ -146,22 +147,25 @@ class SearchActivity : AppCompatActivity() {
                         updateButton.visibility = View.GONE
                     }
                 }
-                    override fun onFailure(call: Call<DataTrackResponse>, t: Throwable) {
-                        showMessage()
-                        val  additionalMessage = t.message.toString()
-                        imageError.setImageResource(drawable.vector_no_signal)
-                        errorMessage.text = getString(R.string.no_signal)
-                        updateButton.visibility = View.VISIBLE
-                        if (additionalMessage.isNotEmpty()){
-                            Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG).show()
-                            }
-                        updateButton.setOnClickListener {
-                            request()
-                        }
+
+                override fun onFailure(call: Call<DataTrackResponse>, t: Throwable) {
+                    showMessage()
+                    val additionalMessage = t.message.toString()
+                    imageError.setImageResource(drawable.vector_no_signal)
+                    errorMessage.text = getString(R.string.no_signal)
+                    updateButton.visibility = View.VISIBLE
+                    if (additionalMessage.isNotEmpty()) {
+                        Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
+                            .show()
                     }
+                    updateButton.setOnClickListener {
+                        request()
+                    }
+                }
             })
         true
     }
+
     private fun showMessage() {
         trackListAdapter.setTracks(null)
         imageError.visibility = View.VISIBLE
@@ -169,32 +173,19 @@ class SearchActivity : AppCompatActivity() {
         rvTrackList.visibility = View.GONE
     }
 
-    private fun loadHistory(){
+    private fun loadHistory() {
         val loadGson = sharedPrefs.getString(KEY, "")
         if (loadGson != "") {
-            listHistory = Gson().fromJson(loadGson, object : TypeToken<ArrayList<Track>>(){}.type)
+            listHistory = Gson().fromJson(loadGson, object : TypeToken<ArrayList<Track>>() {}.type)
+            saveListAdapter.currentLists(false)
             saveListAdapter.setTracks(listHistory)
             youSearchClear = true
         }
     }
 
-     fun saveHistory(sharedPrefs: SharedPreferences, saveTrack: Track){
-         var indexTrack = 10
-          for (item in listSave) {
-            if (item.trackId == saveTrack.trackId)   indexTrack = (listSave.indexOf(item))
-        }
-         if (indexTrack < 10) listSave.removeAt(indexTrack)
-        if (listSave.size >= 10) listSave.removeAt(index = 9)
-        listSave.add(0, saveTrack)
-        val json = Gson().toJson(listSave)
-         sharedPrefs.edit()
-             .putString(KEY, json.toString())
-             .apply()
-     }
-
-    private fun listsVisibility(s: CharSequence?){
-        if (youSearchClear && s?.isEmpty() == true) loadHistory()
-        youSearch.visibility = if (youSearchClear && s?.isEmpty() == true) View.VISIBLE else View.GONE
+    private fun listsVisibility(s: CharSequence?) {
+        youSearch.visibility =
+            if (youSearchClear && s?.isEmpty() == true) View.VISIBLE else View.GONE
         rvTrackList.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
     }
 
@@ -217,8 +208,12 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
+        const val DATA = "data"
+        const val KEY = "key"
     }
 }
+
+
 
 
 

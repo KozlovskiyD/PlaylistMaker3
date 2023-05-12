@@ -5,10 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 
-class TrackListAdapter(private val sharedPrefs: SharedPreferences) :
+class TrackListAdapter(sharedPrefs: SharedPreferences) :
+
     RecyclerView.Adapter<TrackListViewHolder>() {
     private var tracks = mutableListOf<Track>()
-    private val searchActivity = SearchActivity()
+    private var tracksSave = mutableListOf<Track>()
+    private var current = false
+    private val searchHistory = SearchHistory(sharedPrefs, tracksSave)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder =
         TrackListViewHolder(parent)
@@ -16,7 +19,9 @@ class TrackListAdapter(private val sharedPrefs: SharedPreferences) :
     override fun onBindViewHolder(holder: TrackListViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
-            searchActivity.saveHistory(sharedPrefs, tracks[position])
+            if (current) {
+                searchHistory.saveHistory(tracks[position])
+            }
         }
     }
 
@@ -32,4 +37,7 @@ class TrackListAdapter(private val sharedPrefs: SharedPreferences) :
         notifyDataSetChanged()
     }
 
+    fun currentLists(currentList: Boolean) {
+        current = currentList
+    }
 }

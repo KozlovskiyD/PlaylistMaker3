@@ -133,7 +133,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/save_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/layout_height"
+            android:layout_weight="1"
             android:layout_marginTop="@dimen/top_24"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
