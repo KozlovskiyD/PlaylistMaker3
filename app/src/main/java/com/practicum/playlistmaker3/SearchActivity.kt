@@ -97,6 +97,7 @@ class SearchActivity : AppCompatActivity() {
 
         }
 
+
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
@@ -210,6 +211,7 @@ class SearchActivity : AppCompatActivity() {
         const val SAVE_TEXT = "SAVE_TEXT"
         const val DATA = "data"
         const val KEY = "key"
+        const val KEY_TRACK = "key_track"
     }
 }
 
