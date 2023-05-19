@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         android:usesCleartextTraffic="true"
-        tools:targetApi="s">
+        tools:targetApi="28">
         <activity
             android:name=".MediaActivity"
             android:exported="false">
