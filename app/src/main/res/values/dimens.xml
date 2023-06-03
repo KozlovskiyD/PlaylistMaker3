@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="text_2">2sp</dimen>
+    <dimen name="text_13">13sp</dimen>
     <dimen name="texts_16">16sp</dimen>
     <dimen name="text_19">19sp</dimen>
     <dimen name="text_button">22sp</dimen>
@@ -15,6 +16,7 @@
     <dimen name="top_12">12dp</dimen>
     <dimen name="top_14">14dp</dimen>
     <dimen name="top_padding">16dp</dimen>
+    <dimen name="top_20">20dp</dimen>
     <dimen name="top_22">22dp</dimen>
     <dimen name="top_24">24dp</dimen>
     <dimen name="top_28">28dp</dimen>
@@ -25,5 +27,8 @@
     <dimen name="top_48">48dp</dimen>
     <dimen name="top_56">56dp</dimen>
     <dimen name="height_61">61dp</dimen>
+    <dimen name="top_82">82dp</dimen>
+    <dimen name="top_100">100dp</dimen>
+    <dimen name="top_189">189dp</dimen>
 
 </resources>
