@@ -60,7 +60,7 @@
             android:textCursorDrawable="@null"
             android:textFontWeight="400"
             android:textSize="@dimen/texts_16"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="RtlSymmetry,TextContrastCheck" />
 
         <ImageView
             android:id="@+id/clearIcon"
@@ -83,6 +83,14 @@
         android:background="?attr/colorSecondary"
         android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <ProgressBar android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/blue_200"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/image_error"
@@ -136,7 +144,8 @@
             android:layout_height="@dimen/layout_height"
             android:layout_weight="1"
             android:layout_marginTop="@dimen/top_24"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:ignore="InefficientWeight" />
 
         <Button
             style="@style/update_button"
