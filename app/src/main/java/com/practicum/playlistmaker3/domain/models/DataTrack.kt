@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3
+package com.practicum.playlistmaker3.domain.models
 
 data class Track(
     val trackId: String,
@@ -11,4 +11,4 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-)
+): java.io.Serializable

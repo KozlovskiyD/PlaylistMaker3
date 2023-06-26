@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3
+package com.practicum.playlistmaker3.presentation.searchActivity
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
@@ -14,7 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.R.drawable
+import com.practicum.playlistmaker3.data.dto.DataTrackResponse
+import com.practicum.playlistmaker3.data.network.Itunes
+import com.practicum.playlistmaker3.domain.models.Track
+import com.practicum.playlistmaker3.ui.hideTheKeyboard
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -234,7 +239,6 @@ class SearchActivity : AppCompatActivity() {
         const val SAVE_TEXT = "SAVE_TEXT"
         const val DATA = "data"
         const val KEY = "key"
-        const val KEY_TRACK = "key_track"
         const val CLICK_DEBOUNCE_DELAY = 1000L
         const val SEARCH_DELAY = 2000L
     }
