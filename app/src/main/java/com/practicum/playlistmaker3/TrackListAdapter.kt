@@ -2,6 +2,8 @@ package com.practicum.playlistmaker3
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -12,6 +14,8 @@ class TrackListAdapter(sharedPrefs: SharedPreferences) :
     private var tracks = mutableListOf<Track>()
     private var current = false
     private val searchHistory = SearchHistory(sharedPrefs)
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder =
         TrackListViewHolder(parent)
@@ -20,8 +24,10 @@ class TrackListAdapter(sharedPrefs: SharedPreferences) :
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
             searchHistory.saveHistory(tracks[position], current)
-            Intent(it.context, MediaActivity::class.java).apply {
-                it.context.startActivity(this)
+            if (clickDebounce()) {
+                Intent(it.context, MediaActivity::class.java).apply {
+                    it.context.startActivity(this)
+                }
             }
         }
     }
@@ -40,5 +46,14 @@ class TrackListAdapter(sharedPrefs: SharedPreferences) :
 
     fun currentLists(currentList: Boolean) {
         current = currentList
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, SearchActivity.CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 }

@@ -1,10 +1,12 @@
 package com.practicum.playlistmaker3
 
+
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker3.SearchActivity.Companion.KEY
 import com.practicum.playlistmaker3.SearchActivity.Companion.KEY_TRACK
+
 
 class SearchHistory(private val sharedPrefs: SharedPreferences) {
 

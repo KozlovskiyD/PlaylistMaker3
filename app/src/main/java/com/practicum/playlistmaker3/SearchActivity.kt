@@ -3,6 +3,8 @@ package com.practicum.playlistmaker3
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,12 +32,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var rvTrackList: RecyclerView
     private lateinit var youSearch: LinearLayout
     private lateinit var rvSearchList: RecyclerView
+    private lateinit var progressBar: ProgressBar
     private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var saveListAdapter: TrackListAdapter
     private lateinit var sharedPrefs: SharedPreferences
 
     private var listHistory: ArrayList<Track> = arrayListOf()
     private var youSearchClear = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable{request()}
 
     private val baseUrl = "http://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -62,6 +67,7 @@ class SearchActivity : AppCompatActivity() {
         rvTrackList = findViewById(R.id.trackList)
         youSearch = findViewById(R.id.you_search)
         rvSearchList = findViewById(R.id.save_list)
+        progressBar = findViewById(R.id.progressBar)
 
         rvSearchList.adapter = saveListAdapter
 
@@ -104,9 +110,8 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.isEmpty() == true) {
-                    loadHistory()
-                }
+                if (s?.isEmpty() == true) loadHistory()
+                searchDebounce(s)
                 clearButtonVisibility(s)
                 listsVisibility(s)
             }
@@ -126,12 +131,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun request() {
+        progressBarVisibility()
         trackServer.search(inputEditText.text.toString())
             .enqueue(object : Callback<DataTrackResponse> {
                 override fun onResponse(
                     call: Call<DataTrackResponse>,
                     response: Response<DataTrackResponse>
                 ) {
+                    progressBar.visibility = View.GONE
                     if ((response.code() == 200) and (response.body()?.results?.isNotEmpty() == true)) {
                         trackListAdapter = TrackListAdapter(sharedPrefs)
                         trackListAdapter.currentLists(true)
@@ -174,6 +181,15 @@ class SearchActivity : AppCompatActivity() {
         rvTrackList.visibility = View.GONE
     }
 
+    private fun progressBarVisibility(){
+        if (inputEditText.text.isNotEmpty()){
+            errorMessage.visibility = View.GONE
+            rvTrackList.visibility = View.GONE
+            imageError.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        }
+    }
+
     private fun loadHistory() {
         val loadGson = sharedPrefs.getString(KEY, "")
         if (loadGson != "") {
@@ -196,6 +212,13 @@ class SearchActivity : AppCompatActivity() {
         } else clearButton.visibility = View.VISIBLE
     }
 
+    private fun searchDebounce(s: CharSequence?) {
+        if (s?.isNotEmpty() == true) {
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DELAY)
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val saveEditText = ""
@@ -212,6 +235,8 @@ class SearchActivity : AppCompatActivity() {
         const val DATA = "data"
         const val KEY = "key"
         const val KEY_TRACK = "key_track"
+        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_DELAY = 2000L
     }
 }
 

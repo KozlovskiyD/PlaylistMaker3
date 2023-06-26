@@ -31,8 +31,7 @@ class TrackListViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
         tvTractName.text = model.trackName
         tvArtistName.text = model.artistName
-        tvTractTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(293000L)
-            .format(model.trackTimeMillis)
+        tvTractTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
     }
 }
 
