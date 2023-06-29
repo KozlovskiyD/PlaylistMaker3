@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.presentation.searchActivity
+package com.practicum.playlistmaker3.ui.search
 
 
 import android.content.SharedPreferences

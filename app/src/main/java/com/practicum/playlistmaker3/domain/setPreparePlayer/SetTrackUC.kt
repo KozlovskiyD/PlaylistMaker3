@@ -4,7 +4,7 @@ import com.practicum.playlistmaker3.domain.models.Track
 
 class SetTrackUC(private val trackRepository: TrackRepository) {
 
-     fun sendTrackInData(track: Track): Boolean {
+      fun sendTrackInData(track: Track) {
         return trackRepository.sendTrack(track)
     }
 

@@ -3,6 +3,8 @@ package com.practicum.playlistmaker3.presentation.mediaActivity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,27 +17,34 @@ import com.practicum.playlistmaker3.data.trackRepository.TrackRepositoryImpl
 import com.practicum.playlistmaker3.data.trackRepository.createTime.CreateTimeImpl
 import com.practicum.playlistmaker3.data.trackRepository.mediaPlayers.*
 import com.practicum.playlistmaker3.domain.GetTrackUC
-import com.practicum.playlistmaker3.domain.api.SimpleDataFormat
 import com.practicum.playlistmaker3.domain.getCreateTime.GetCreateTimeUC
 import com.practicum.playlistmaker3.domain.models.Track
 import com.practicum.playlistmaker3.domain.setPreparePlayer.SetTrackUC
 
+const val DELAY_DEFAULT = 500L
+const val THOUSAND_L = 1000L
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
 
     private val getTrackUC = GetTrackUC()
-    private val preparePlayer = MediaPlayers()
-    private val trackRepositoryImpl = TrackRepositoryImpl(preparePlayer)
-    private val setTrackUC = SetTrackUC(trackRepositoryImpl)
-    private val createTimeImpl = CreateTimeImpl()
-    private val getCreateTimeUC = GetCreateTimeUC(createTimeImpl)
+    private val mediaPlayers by lazy { MediaPlayers(applicationContext) }
+    private val trackRepositoryImpl by lazy {
+        TrackRepositoryImpl(
+            applicationContext,
+            mediaPlayers
+        )
+    }
+    private val setTrackUC by lazy { SetTrackUC(trackRepositoryImpl) }
+    private val createTimeImpl by lazy { CreateTimeImpl(mediaPlayers) }
+    private val getCreateTimeUC by lazy { GetCreateTimeUC(createTimeImpl) }
     private lateinit var currentTrack: Track
-
-
     private lateinit var timer: TextView
     private lateinit var buttonPlay: ImageView
     private var playerState = STATE_DEFAULT
+    var mainThreadHandler: Handler? = null
+    var duration = 0L
+    var currentsecond = 0L
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +53,7 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
 
         val trackNameMedia = findViewById<TextView>(id.track_name)
         val artistNameMedia = findViewById<TextView>(id.artist_name_media)
-        val duration = findViewById<TextView>(id.content_duration)
+        val durationTrack = findViewById<TextView>(id.content_duration)
         val album = findViewById<TextView>(id.content_album)
         val year = findViewById<TextView>(id.content_year)
         val genre = findViewById<TextView>(id.content_genre)
@@ -53,11 +62,22 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
         val cover = findViewById<ImageView>(id.cover)
         buttonPlay = findViewById(id.button_play)
         timer = findViewById(id.timer)
+        cover.setImageResource(R.drawable.vector_placeholder_big)
 
         val activity = intent.getBooleanExtra("activity", false)
         if (activity) {
             currentTrack =
                 getTrack()                                                   //получить трек из searchActivity
+
+            artistNameMedia.text = currentTrack.artistName
+            trackNameMedia.text = currentTrack.trackName
+            year.text = currentTrack.releaseDate
+            genre.text = currentTrack.primaryGenreName
+            country.text = currentTrack.country
+            durationTrack.text = simpleDateFormat(currentTrack.trackTimeMillis)
+            timer.text = simpleDateFormat("0")
+            if (currentTrack.collectionName.isNotEmpty()) album.text = currentTrack.collectionName
+
 
             Glide
                 .with(applicationContext)
@@ -67,21 +87,12 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
                 .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
                 .into(cover)
 
-            artistNameMedia.text = currentTrack.artistName
-            trackNameMedia.text = currentTrack.trackName
-            year.text = currentTrack.releaseDate
-            genre.text = currentTrack.primaryGenreName
-            country.text = currentTrack.country
-            duration.text = simpleDateFormat(currentTrack.trackTimeMillis)
-            timer.text = simpleDateFormat("0")
-            if (currentTrack.collectionName.isNotEmpty()) album.text = currentTrack.collectionName
-
-            preparePlayer(currentTrack)                                                               //подготовить MediaPlayer
-
+            mainThreadHandler = Handler(Looper.getMainLooper())
+            preparePlayer(currentTrack)                                                    //подготовить MediaPlayer
 
             buttonPlay.setOnClickListener {
-                playbackControl(playerState)                                                             //управление MediaPlayer
-                createTime()                                                                                     //таймер
+                playbackControl(playerState)                                                 //управление воспроизведением
+                mainThreadHandler?.post(createTime())
             }
         }
         buttonBack.setOnClickListener {
@@ -94,10 +105,26 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
     }
 
     private fun preparePlayer(currentTrackPreviewUrl: Track) {
-        if (!setTrackUC.sendTrackInData(currentTrackPreviewUrl)) {
-            buttonPlay.setImageResource(R.drawable.button_play)
-            timer.text = simpleDateFormat("0")
-            playerState = STATE_PREPARED
+        playerState = STATE_PREPARED
+        setTrackUC.sendTrackInData(currentTrackPreviewUrl)
+    }
+
+    private fun createTime(): Runnable {
+        duration = (getCreateTimeUC.getCurrentTime(true)) / THOUSAND_L
+
+        return object : Runnable {
+            @SuppressLint("UseCompatLoadingForDrawables")
+            override fun run() {
+                currentsecond = (getCreateTimeUC.getCurrentTime(false)) / THOUSAND_L
+                timer.text = String.format("%02d : %02d", currentsecond / 60, currentsecond % 60)
+                mainThreadHandler?.postDelayed(this, DELAY_DEFAULT)
+                if (duration == currentsecond) {
+                    mainThreadHandler?.removeCallbacksAndMessages(null)
+                    buttonPlay.setImageResource(R.drawable.button_play)
+                    timer.text = simpleDateFormat("0")
+                    playerState = STATE_PREPARED
+                }
+            }
         }
     }
 
@@ -115,11 +142,6 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
         }
     }
 
-    private fun createTime() {
-        val second = getCreateTimeUC.getCurrentTime()
-        timer.text = String.format("%02d:%02d", second / 60, second % 60)
-    }
-
     override fun onPause() {
         super.onPause()
         playbackControl(STATE_PLAYING)
@@ -127,7 +149,7 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        playbackControl(STATE_HANDLER)
+        mainThreadHandler?.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {

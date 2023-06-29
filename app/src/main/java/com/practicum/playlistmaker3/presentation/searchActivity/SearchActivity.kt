@@ -20,6 +20,7 @@ import com.practicum.playlistmaker3.data.dto.DataTrackResponse
 import com.practicum.playlistmaker3.data.network.Itunes
 import com.practicum.playlistmaker3.domain.models.Track
 import com.practicum.playlistmaker3.ui.hideTheKeyboard
+import com.practicum.playlistmaker3.ui.search.TrackListAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
     private var listHistory: ArrayList<Track> = arrayListOf()
     private var youSearchClear = false
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable{request()}
+    private val searchRunnable = Runnable { request() }
 
     private val baseUrl = "http://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -186,8 +187,8 @@ class SearchActivity : AppCompatActivity() {
         rvTrackList.visibility = View.GONE
     }
 
-    private fun progressBarVisibility(){
-        if (inputEditText.text.isNotEmpty()){
+    private fun progressBarVisibility() {
+        if (inputEditText.text.isNotEmpty()) {
             errorMessage.visibility = View.GONE
             rvTrackList.visibility = View.GONE
             imageError.visibility = View.GONE

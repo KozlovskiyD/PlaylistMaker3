@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.presentation.searchActivity
+package com.practicum.playlistmaker3.ui.search
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker3.domain.models.Track
 import com.practicum.playlistmaker3.presentation.mediaActivity.MediaActivity
+import com.practicum.playlistmaker3.presentation.searchActivity.SearchActivity
+import com.practicum.playlistmaker3.presentation.searchActivity.TrackListViewHolder
 
 
 class TrackListAdapter(sharedPrefs: SharedPreferences) :
