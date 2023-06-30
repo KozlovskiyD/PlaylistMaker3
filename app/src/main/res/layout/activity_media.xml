@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:theme="@style/Theme.PlaylistMaker"
 
-    tools:context=".MediaActivity">
+    tools:context=".presentation.mediaActivity.MediaActivity">
 
     <ImageView
         android:id="@+id/back_main"

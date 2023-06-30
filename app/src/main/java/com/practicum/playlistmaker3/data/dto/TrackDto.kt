@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker3
+package com.practicum.playlistmaker3.data.dto
 
-data class Track(
+data class TrackDto(
     val trackId: String,
     val trackName: String,
     val artistName: String,
