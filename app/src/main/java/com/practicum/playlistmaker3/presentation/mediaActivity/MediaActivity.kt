@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker3.presentation.mediaActivity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,19 +14,21 @@ import com.practicum.playlistmaker3.R.id
 import com.practicum.playlistmaker3.R.layout
 import com.practicum.playlistmaker3.data.trackRepository.TrackRepositoryImpl
 import com.practicum.playlistmaker3.data.trackRepository.createTime.CreateTimeImpl
-import com.practicum.playlistmaker3.data.trackRepository.mediaPlayers.*
-import com.practicum.playlistmaker3.domain.GetTrackUC
+import com.practicum.playlistmaker3.data.trackRepository.mediaPlayer.*
 import com.practicum.playlistmaker3.domain.getCreateTime.GetCreateTimeUC
 import com.practicum.playlistmaker3.domain.models.Track
+import com.practicum.playlistmaker3.domain.models.getCoverArtwork
 import com.practicum.playlistmaker3.domain.setPreparePlayer.SetTrackUC
 
 const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
+const val ACTIVITY = "activity"
+const val TRACK = "track"
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
+class MediaActivity : AppCompatActivity() {
 
-    private val getTrackUC = GetTrackUC()
+
     private val mediaPlayers by lazy { MediaPlayers(applicationContext) }
     private val trackRepositoryImpl by lazy {
         TrackRepositoryImpl(
@@ -64,10 +65,10 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
         timer = findViewById(id.timer)
         cover.setImageResource(R.drawable.vector_placeholder_big)
 
-        val activity = intent.getBooleanExtra("activity", false)
+        val activity = intent.getBooleanExtra(ACTIVITY, false)
         if (activity) {
             currentTrack =
-                getTrack()                                                   //получить трек из searchActivity
+                intent.getSerializableExtra(TRACK) as Track                               //получить трек из searchActivity
 
             artistNameMedia.text = currentTrack.artistName
             trackNameMedia.text = currentTrack.trackName
@@ -77,7 +78,6 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
             durationTrack.text = simpleDateFormat(currentTrack.trackTimeMillis)
             timer.text = simpleDateFormat("0")
             if (currentTrack.collectionName.isNotEmpty()) album.text = currentTrack.collectionName
-
 
             Glide
                 .with(applicationContext)
@@ -98,10 +98,6 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-    }
-
-    private fun getTrack(): Track {
-        return getTrackUC.execute(Intent(intent))
     }
 
     private fun preparePlayer(currentTrackPreviewUrl: Track) {
@@ -157,14 +153,3 @@ class MediaActivity : SimpleDataFormat, GetCoverArtwork, AppCompatActivity() {
         playbackControl(STATE_RELEASE)
     }
 }
-
-
-
-
-
-
-
-
-
-
-

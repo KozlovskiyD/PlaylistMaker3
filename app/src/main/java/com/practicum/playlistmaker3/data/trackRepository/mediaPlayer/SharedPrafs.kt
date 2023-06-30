@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.data.trackRepository.mediaPlayers
+package com.practicum.playlistmaker3.data.trackRepository.mediaPlayer
 
 import android.content.Context
 import com.google.gson.Gson

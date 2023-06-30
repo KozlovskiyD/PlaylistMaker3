@@ -2,8 +2,8 @@ package com.practicum.playlistmaker3.data.trackRepository
 
 import android.content.Context
 import com.practicum.playlistmaker3.data.dto.TrackDto
-import com.practicum.playlistmaker3.data.trackRepository.mediaPlayers.MediaPlayers
-import com.practicum.playlistmaker3.data.trackRepository.mediaPlayers.SharedPrefs
+import com.practicum.playlistmaker3.data.trackRepository.mediaPlayer.MediaPlayers
+import com.practicum.playlistmaker3.data.trackRepository.mediaPlayer.SharedPrefs
 import com.practicum.playlistmaker3.domain.models.Track
 import com.practicum.playlistmaker3.domain.setPreparePlayer.TrackRepository
 

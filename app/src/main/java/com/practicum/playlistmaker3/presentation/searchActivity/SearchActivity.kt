@@ -19,7 +19,6 @@ import com.practicum.playlistmaker3.R.drawable
 import com.practicum.playlistmaker3.data.dto.DataTrackResponse
 import com.practicum.playlistmaker3.data.network.Itunes
 import com.practicum.playlistmaker3.domain.models.Track
-import com.practicum.playlistmaker3.ui.hideTheKeyboard
 import com.practicum.playlistmaker3.ui.search.TrackListAdapter
 import retrofit2.Call
 import retrofit2.Callback

@@ -11,4 +11,8 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-): java.io.Serializable
+) : java.io.Serializable
+
+fun getCoverArtwork(art: String): String {
+    return art.replaceAfterLast('/', "512x512bb.jpg")
+}

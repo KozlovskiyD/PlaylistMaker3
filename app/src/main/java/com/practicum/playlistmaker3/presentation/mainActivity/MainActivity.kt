@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker3.R
+import com.practicum.playlistmaker3.presentation.mediaActivity.ACTIVITY
 import com.practicum.playlistmaker3.presentation.mediaActivity.MediaActivity
 import com.practicum.playlistmaker3.presentation.searchActivity.SearchActivity
 import com.practicum.playlistmaker3.presentation.settingsActivity.SettingsActivity
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         val buttonMedia = findViewById<Button>(R.id.media_button)
         buttonMedia.setOnClickListener {
             Intent(this, MediaActivity::class.java).apply {
-            putExtra("activity", false)
+                putExtra(ACTIVITY, false)
                 startActivity(this)
             }
         }
