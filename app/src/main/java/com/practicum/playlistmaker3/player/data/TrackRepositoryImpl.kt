@@ -1,0 +1,37 @@
+package com.practicum.playlistmaker3.player.data
+
+import android.content.Context
+import com.practicum.playlistmaker3.search.data.dto.TrackDto
+import com.practicum.playlistmaker3.search.domain.models.Track
+import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
+import com.practicum.playlistmaker3.player.data.mediaPlayer.MediaPlayers
+import com.practicum.playlistmaker3.player.domain.setPreparePlayer.TrackRepository
+
+class TrackRepositoryImpl(applicationContext: Context, private val mediaPlayers: MediaPlayers) :
+    TrackRepository {
+    private val sharedPrefs = SharedPrefs(applicationContext)
+
+    override fun sendTrack(track: Track) {
+        sharedPrefs.sharedPref(mapToTrackDto(track))
+        return mediaPlayers.sendTrackDto()
+    }
+
+    override fun controlPlayState(playerState: Int) {
+        mediaPlayers.playbackControls(playerState)
+    }
+
+    private fun mapToTrackDto(track: Track): TrackDto {
+        return TrackDto(
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl
+        )
+    }
+}
