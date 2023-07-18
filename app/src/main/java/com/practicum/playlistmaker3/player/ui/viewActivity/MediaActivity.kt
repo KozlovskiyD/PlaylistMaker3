@@ -5,30 +5,31 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.R.id
 import com.practicum.playlistmaker3.R.layout
+import com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer.TrackViewModel
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork
-import com.practicum.playlistmaker3.player.data.mediaPlayer.STATE_PLAYING
-import com.practicum.playlistmaker3.player.data.mediaPlayer.STATE_RELEASE
-import com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer.TrackViewModel
-import com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer.TrackViewModelFactory
 import com.practicum.playlistmaker3.simpleDateFormat
 
 const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
 const val ACTIVITY = "activity"
 const val TRACK = "track"
+const val STATE_DEFAULT = 0
+const val STATE_PREPARED = 1
+const val STATE_PLAYING = 2
+const val STATE_PAUSED = 3
+const val STATE_RELEASE = 4
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 class MediaActivity : AppCompatActivity() {
 
-    private lateinit var vm: ViewModel
+    private lateinit var vm: TrackViewModel
     private lateinit var currentTrack: Track
 
     @SuppressLint("SuspiciousIndentation")
@@ -36,7 +37,8 @@ class MediaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_media)
 
-        vm = ViewModelProvider(this, TrackViewModelFactory(this))[(TrackViewModel::class.java)]
+        vm = ViewModelProvider(this,
+            TrackViewModel.getViewModelFactory())[(TrackViewModel::class.java)]
 
         val trackNameMedia = findViewById<TextView>(id.track_name)
         val artistNameMedia = findViewById<TextView>(id.artist_name_media)
@@ -54,7 +56,7 @@ class MediaActivity : AppCompatActivity() {
         val activity = intent.getBooleanExtra(ACTIVITY, false)
         if (activity) {
             currentTrack =
-                intent.getSerializableExtra(TRACK) as Track                               //получить трек из searchActivity
+                intent.getSerializableExtra(TRACK) as Track                                                                   //получить трек из searchActivity
 
             artistNameMedia.text = currentTrack.artistName
             trackNameMedia.text = currentTrack.trackName
@@ -73,27 +75,20 @@ class MediaActivity : AppCompatActivity() {
                 .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
                 .into(cover)
 
-            (vm as TrackViewModel).preparePlayer(currentTrack)                                                //подготовить MediaPlayer
+            vm.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
 
-            (vm as TrackViewModel).playerLiveData.observe(this) { playButton ->          //управление воспроизведением
-                if (playButton) buttonPlay.setImageResource(R.drawable.button_play)
+            vm.mediaLiveData.observe(this) { screen ->
+                if (screen.playButton) buttonPlay.setImageResource(R.drawable.button_play)                   //управление воспроизведением
                 else buttonPlay.setImageResource(R.drawable.vector_pause)
-            }
 
-            (vm as TrackViewModel).timerLiveData.observe(this) { time ->                  //время воспроизведения
-                timer.text = String.format("%02d : %02d", time / 60, time % 60)
+                timer.text = String.format("%02d : %02d",
+                    screen.time / 60,
+                    screen.time % 60)                                                                                                            //время воспроизведения
             }
-            /*mediaPlayers.stopPlayLiveData.observe(this) {
-                Log.e("AAA", "stop player")
-                (vm as TrackViewModel).stopTimer()
-                (vm as TrackViewModel).playerStateChange(STATE_PREPARED)
-                buttonPlay.setImageResource(R.drawable.button_play)
-                timer.text = simpleDateFormat("0")
-            }*/
 
             buttonPlay.setOnClickListener {
-                (vm as TrackViewModel).playbackControl()
-                (vm as TrackViewModel).startCreateTime()
+                vm.playbackControl()
+                vm.startCreateTime()
             }
         }
         buttonBack.setOnClickListener {
@@ -103,16 +98,16 @@ class MediaActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        (vm as TrackViewModel).playerStateChange(STATE_PLAYING)
+        vm.playerStateChange(STATE_PLAYING)
     }
 
     override fun onStop() {
         super.onStop()
-        (vm as TrackViewModel).stopTimer()
+        vm.stopTimer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        (vm as TrackViewModel).playerStateChange(STATE_RELEASE)
+        vm.playerStateChange(STATE_RELEASE)
     }
 }

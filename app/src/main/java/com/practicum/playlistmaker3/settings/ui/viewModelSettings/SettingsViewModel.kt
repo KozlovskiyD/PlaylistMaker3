@@ -1,42 +1,50 @@
 package com.practicum.playlistmaker3.settings.ui.viewModelSettings
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.practicum.playlistmaker3.settings.domain.SaveThemeNightUC
-import com.practicum.playlistmaker3.sharing.domain.ToShareUC
-import com.practicum.playlistmaker3.sharing.domain.UserAgreementUC
-import com.practicum.playlistmaker3.sharing.domain.WriteToSupportUC
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker3.util.Creator
 
 
-class SettingsViewModel(
-    private val writeToSupportUC: WriteToSupportUC,
-    private val userAgreementUC: UserAgreementUC,
-    private val toShareUC: ToShareUC,
-    private val saveThemeNightUC: SaveThemeNightUC,
-) : ViewModel() {
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val sharingRepository = Creator.getSharingRepository(getApplication())
+    private val settingRepository = Creator.settingRepository(getApplication())
+
+    companion object {
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SettingsViewModel(this[APPLICATION_KEY] as Application)
+            }
+        }
+    }
 
     private var switchCheckedLiveDataMutable = MutableLiveData<Boolean>()
     var switchCheckedLiveData: LiveData<Boolean> = switchCheckedLiveDataMutable
 
     fun saveSwitch(checked: Boolean) {
-        saveThemeNightUC.saveTheme(checked)
+        settingRepository.themeNight(checked)
     }
 
     fun switchCheck() {
-        val loadCheck = saveThemeNightUC.loadTheme()
+        val loadCheck = settingRepository.loadTheme()
         switchCheckedLiveDataMutable.value = loadCheck
     }
 
     fun write() {
-        writeToSupportUC.writeTo()
+        sharingRepository.writeTo()
     }
 
     fun agreement() {
-        userAgreementUC.userAgreement()
+        sharingRepository.agreement()
     }
 
     fun share() {
-        toShareUC.toShare()
+        sharingRepository.toShareRepository()
     }
 }

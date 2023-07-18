@@ -6,22 +6,21 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.settings.ui.viewModelSettings.SettingsViewModel
-import com.practicum.playlistmaker3.settings.ui.viewModelSettings.SettingsViewModelFactory
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var vm: ViewModel
+    private lateinit var vm: SettingsViewModel
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        vm = ViewModelProvider(this, SettingsViewModelFactory(this))[SettingsViewModel::class.java]
+        vm = ViewModelProvider(this,
+            SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
         val buttonBack = findViewById<ImageView>(R.id.back_main)
         val switchNight = findViewById<Switch>(R.id.switch1)
@@ -32,27 +31,27 @@ class SettingsActivity : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-        (vm as SettingsViewModel).switchCheck()
+        vm.switchCheck()
 
-        (vm as SettingsViewModel).switchCheckedLiveData.observe(this) { check ->
+        vm.switchCheckedLiveData.observe(this) { check ->
             switchNight.isChecked = check
         }
 
         switchNight.setOnCheckedChangeListener { _, checked ->
-            (vm as SettingsViewModel).saveSwitch(checked)
+            vm.saveSwitch(checked)
 
         }
 
         buttonShare.setOnClickListener {
-            (vm as SettingsViewModel).write()
+            vm.write()
         }
 
         buttonWriteTo.setOnClickListener {
-            (vm as SettingsViewModel).share()
+            vm.share()
         }
 
         buttonUserAgreement.setOnClickListener {
-            (vm as SettingsViewModel).agreement()
+            vm.agreement()
         }
     }
 }

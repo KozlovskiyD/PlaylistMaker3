@@ -1,30 +1,27 @@
 package com.practicum.playlistmaker3.search.ui.viewActivity
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker3.R
-import com.practicum.playlistmaker3.R.drawable
-import com.practicum.playlistmaker3.presentation.searchActivity.hideTheKeyboard
-import com.practicum.playlistmaker3.search.data.dto.TrackSearchResponse
-import com.practicum.playlistmaker3.search.data.network.Itunes
+import com.practicum.playlistmaker3.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker3.player.ui.viewActivity.ACTIVITY
+import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
+import com.practicum.playlistmaker3.player.ui.viewActivity.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.playlistmaker3.search.hideTheKeyboard
+import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
+import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
 
 class SearchActivity : AppCompatActivity() {
 
@@ -36,33 +33,46 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var rvTrackList: RecyclerView
     private lateinit var youSearch: LinearLayout
-    private lateinit var rvSearchList: RecyclerView
+    private lateinit var rvSaveList: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var trackListAdapter: TrackListAdapter
-    private lateinit var saveListAdapter: TrackListAdapter
-    private lateinit var sharedPrefs: SharedPreferences
-
-    private var listHistory: ArrayList<Track> = arrayListOf()
     private var youSearchClear = false
+    private var textRequest = ""
+    private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { request() }
+    private lateinit var vm: SearchViewModel
+    private lateinit var binding: ActivitySearchBinding
 
-    private val baseUrl = "http://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val trackListAdapter = TrackListAdapter {
+        vm.saveHistory(it)
+        if (clickDebounce()) {
+            Intent(this, MediaActivity::class.java).apply {
+                putExtra(ACTIVITY, true)
+                putExtra(TRACK, it)
+                startActivity(this)
+            }
+        }
+    }
 
-    private val trackServer = retrofit.create(Itunes::class.java)
+    private val saveListAdapter = TrackListAdapter {
+        if (clickDebounce()) {
+            Intent(this, MediaActivity::class.java).apply {
+                putExtra(ACTIVITY, true)
+                putExtra(TRACK, it)
+                startActivity(this)
+            }
+        }
+    }
 
     @SuppressLint("MissingInflatedId", "SuspiciousIndentation", "CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        sharedPrefs = getSharedPreferences(DATA, MODE_PRIVATE)
-        trackListAdapter = TrackListAdapter(sharedPrefs)
-        saveListAdapter = TrackListAdapter(sharedPrefs)
+        vm = ViewModelProvider(this,
+            SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
+        binding = ActivitySearchBinding.inflate((layoutInflater))
+        setContentView(binding.root)
+
         errorMessage = findViewById(R.id.errorMessage)
         clearButton = findViewById(R.id.clearIcon)
         updateButton = findViewById(R.id.update_button)
@@ -71,10 +81,8 @@ class SearchActivity : AppCompatActivity() {
         imageError = findViewById(R.id.image_error)
         rvTrackList = findViewById(R.id.trackList)
         youSearch = findViewById(R.id.you_search)
-        rvSearchList = findViewById(R.id.save_list)
+        rvSaveList = findViewById(R.id.save_list)
         progressBar = findViewById(R.id.progressBar)
-
-        rvSearchList.adapter = saveListAdapter
 
         val buttonBack = findViewById<ImageView>(R.id.back_main)
         buttonBack.setOnClickListener {
@@ -89,94 +97,46 @@ class SearchActivity : AppCompatActivity() {
 
         clearHistory.setOnClickListener {
             saveListAdapter.setTracks(null)
-            sharedPrefs.edit().clear().apply()
             youSearchClear = false
             youSearch.visibility = View.GONE
             rvTrackList.visibility = View.VISIBLE
-        }
-
-        sharedPrefs.registerOnSharedPreferenceChangeListener { _, _ ->
-            loadHistory()
+            vm.clearHistory()
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            loadHistory()
+            vm.loadHistory()
             youSearch.visibility =
                 if (hasFocus && youSearchClear && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
             rvTrackList.visibility =
                 if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
-
         }
 
-
         val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.isEmpty() == true) loadHistory()
-                searchDebounce(s)
+                if (s?.isEmpty() == true) vm.loadHistory()
+                textRequest = inputEditText.text.toString()
+                vm.searchDebounce(s?.toString() ?: "")
                 clearButtonVisibility(s)
                 listsVisibility(s)
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                // empty
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                request()
-            }
-            false
+        simpleTextWatcher.let { inputEditText.addTextChangedListener(it) }
+
+        vm.observeState().observe(this) {
+            render(it)
         }
-    }
 
-    private fun request() {
-        progressBarVisibility()
-        trackServer.search(inputEditText.text.toString())
-            .enqueue(object : Callback<TrackSearchResponse> {
-                override fun onResponse(
-                    call: Call<TrackSearchResponse>,
-                    response: Response<TrackSearchResponse>,
-                ) {
-                    progressBar.visibility = View.GONE
-                    if ((response.code() == 200) and (response.body()?.results?.isNotEmpty() == true)) {
-                        trackListAdapter = TrackListAdapter(sharedPrefs)
-                        trackListAdapter.currentLists(true)
-                        trackListAdapter.setTracks(response.body()?.results!!)
-                        rvTrackList.adapter = trackListAdapter
-                        rvTrackList.visibility = View.VISIBLE
-                        imageError.visibility = View.GONE
-                        errorMessage.visibility = View.GONE
-                        updateButton.visibility = View.GONE
-                    } else {
-                        showMessage()
-                        imageError.setImageResource(drawable.vector_not_found)
-                        errorMessage.text = getString(R.string.not_found)
-                        updateButton.visibility = View.GONE
-                    }
-                }
+        vm.observeShowToast().observe(this) {
+            showToast(it)
+        }
 
-                override fun onFailure(call: Call<TrackSearchResponse>, t: Throwable) {
-                    showMessage()
-                    val additionalMessage = t.message.toString()
-                    imageError.setImageResource(drawable.vector_no_signal)
-                    errorMessage.text = getString(R.string.no_signal)
-                    updateButton.visibility = View.VISIBLE
-                    if (additionalMessage.isNotEmpty()) {
-                        Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
-                            .show()
-                    }
-                    updateButton.setOnClickListener {
-                        request()
-                    }
-                }
-            })
-        true
+        updateButton.setOnClickListener {
+            vm.requestOnListTrack(textRequest)
+        }
     }
 
     private fun showMessage() {
@@ -184,25 +144,69 @@ class SearchActivity : AppCompatActivity() {
         imageError.visibility = View.VISIBLE
         errorMessage.visibility = View.VISIBLE
         rvTrackList.visibility = View.GONE
+        binding.progressBar.isVisible = false
     }
 
-    private fun progressBarVisibility() {
-        if (inputEditText.text.isNotEmpty()) {
-            errorMessage.visibility = View.GONE
-            rvTrackList.visibility = View.GONE
-            imageError.visibility = View.GONE
-            progressBar.visibility = View.VISIBLE
+    private fun render(state: TracksSearchState) = when (state) {
+        is TracksSearchState.Content -> {
+            showContent(state.currentTracks)
+        }
+        is TracksSearchState.Empty -> {
+            showEmpty()
+        }
+        is TracksSearchState.Error -> {
+            showError()
+        }
+        is TracksSearchState.Loading -> {
+            showLoading()
+        }
+        is TracksSearchState.History -> {
+            showHistory(state.historyTracks)
         }
     }
 
-    private fun loadHistory() {
-        val loadGson = sharedPrefs.getString(KEY, "")
-        if (loadGson != "") {
-            listHistory = Gson().fromJson(loadGson, object : TypeToken<ArrayList<Track>>() {}.type)
-            saveListAdapter.currentLists(false)
-            saveListAdapter.setTracks(listHistory)
-            youSearchClear = true
-        }
+    private fun showContent(tracks: List<Track>) {
+        trackListAdapter.setTracks(tracks)
+        rvTrackList.adapter = trackListAdapter
+        rvTrackList.visibility = View.VISIBLE
+        imageError.visibility = View.GONE
+        errorMessage.visibility = View.GONE
+        updateButton.visibility = View.GONE
+    }
+
+    private fun showEmpty() {
+        showMessage()
+        imageError.setImageResource(R.drawable.vector_not_found)
+        errorMessage.text = getString(R.string.not_found)
+        updateButton.visibility = View.GONE
+    }
+
+    private fun showError() {
+        showMessage()
+        imageError.setImageResource(R.drawable.vector_no_signal)
+        errorMessage.text = getString(R.string.no_signal)
+        updateButton.visibility = View.VISIBLE
+        showToast(getString(R.string.no_internet))
+    }
+
+    private fun showLoading() {
+        errorMessage.visibility = View.GONE
+        rvTrackList.visibility = View.GONE
+        imageError.visibility = View.GONE
+        binding.progressBar.isVisible = true
+        binding.updateButton.isVisible = false
+    }
+
+    private fun showHistory(listHistory: List<Track>) {
+        binding.progressBar.isVisible = false
+        saveListAdapter.setTracks(listHistory)
+        rvSaveList.adapter = saveListAdapter
+        youSearchClear = true
+    }
+
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
+            .show()
     }
 
     private fun listsVisibility(s: CharSequence?) {
@@ -217,11 +221,13 @@ class SearchActivity : AppCompatActivity() {
         } else clearButton.visibility = View.VISIBLE
     }
 
-    private fun searchDebounce(s: CharSequence?) {
-        if (s?.isNotEmpty() == true) {
-            handler.removeCallbacks(searchRunnable)
-            handler.postDelayed(searchRunnable, SEARCH_DELAY)
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
+        return current
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -235,19 +241,13 @@ class SearchActivity : AppCompatActivity() {
         savedInstanceState.getString(SAVE_TEXT).toString()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        vm.removeLoadingObserver()
+    }
+
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
-        const val DATA = "data"
-        const val KEY = "key"
         const val CLICK_DEBOUNCE_DELAY = 1000L
-        const val SEARCH_DELAY = 2000L
     }
 }
-
-
-
-
-
-
-
-

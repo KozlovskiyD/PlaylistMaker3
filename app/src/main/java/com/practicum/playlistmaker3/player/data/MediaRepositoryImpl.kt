@@ -1,23 +1,27 @@
 package com.practicum.playlistmaker3.player.data
 
 import android.content.Context
+import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
+import com.practicum.playlistmaker3.player.data.mediaPlayer.GetMediaPlayer
+import com.practicum.playlistmaker3.player.domain.setPreparePlayer.MediaRepository
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
-import com.practicum.playlistmaker3.player.data.mediaPlayer.MediaPlayers
-import com.practicum.playlistmaker3.player.domain.setPreparePlayer.TrackRepository
 
-class TrackRepositoryImpl(applicationContext: Context, private val mediaPlayers: MediaPlayers) :
-    TrackRepository {
-    private val sharedPrefs = SharedPrefs(applicationContext)
+class MediaRepositoryImpl(context: Context, private val getCurrentTime: GetMediaPlayer) :
+    MediaRepository {
+    private val sharedPrefs = SharedPrefs(context)
+
+    override fun getCurrentTime(durationOrCurrent: Boolean): Long {
+        return if (durationOrCurrent) getCurrentTime.timerDuration() else getCurrentTime.timerSecond()
+    }
 
     override fun sendTrack(track: Track) {
         sharedPrefs.sharedPref(mapToTrackDto(track))
-        return mediaPlayers.sendTrackDto()
+        return getCurrentTime.sendTrack()
     }
 
     override fun controlPlayState(playerState: Int) {
-        mediaPlayers.playbackControls(playerState)
+        getCurrentTime.controlPlayState(playerState)
     }
 
     private fun mapToTrackDto(track: Track): TrackDto {
