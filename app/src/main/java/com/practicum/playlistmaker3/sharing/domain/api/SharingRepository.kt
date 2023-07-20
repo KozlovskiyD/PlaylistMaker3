@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.sharing.domain
+package com.practicum.playlistmaker3.sharing.domain.api
 
 interface SharingRepository {
     fun toShareRepository()

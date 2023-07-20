@@ -11,6 +11,7 @@ import com.practicum.playlistmaker3.player.ui.viewActivity.ACTIVITY
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
 import com.practicum.playlistmaker3.search.ui.viewActivity.SearchActivity
 import com.practicum.playlistmaker3.settings.ui.viewActivity.SettingsActivity
+import com.practicum.playlistmaker3.util.Creator
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +21,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        vm = ViewModelProvider(this, MainViewModel.getViewModelFactory())[MainViewModel::class.java]
+        vm = ViewModelProvider(this,
+            MainViewModel.getViewModelFactory(settingIteractor = Creator.provideSettingIterator(
+                application)))[MainViewModel::class.java]
 
         vm.setTheme()
 

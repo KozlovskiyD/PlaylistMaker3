@@ -3,7 +3,7 @@ package com.practicum.playlistmaker3.player.data
 import android.content.Context
 import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
 import com.practicum.playlistmaker3.player.data.mediaPlayer.GetMediaPlayer
-import com.practicum.playlistmaker3.player.domain.setPreparePlayer.MediaRepository
+import com.practicum.playlistmaker3.player.domain.api.MediaRepository
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 import com.practicum.playlistmaker3.search.domain.models.Track
 

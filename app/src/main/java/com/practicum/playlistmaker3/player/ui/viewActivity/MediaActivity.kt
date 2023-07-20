@@ -15,6 +15,7 @@ import com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer.TrackViewMode
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork
 import com.practicum.playlistmaker3.simpleDateFormat
+import com.practicum.playlistmaker3.util.Creator
 
 const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
@@ -38,7 +39,8 @@ class MediaActivity : AppCompatActivity() {
         setContentView(layout.activity_media)
 
         vm = ViewModelProvider(this,
-            TrackViewModel.getViewModelFactory())[(TrackViewModel::class.java)]
+            TrackViewModel.getViewModelFactory(Creator.provideMediaIteractor(
+                application)))[(TrackViewModel::class.java)]
 
         val trackNameMedia = findViewById<TextView>(id.track_name)
         val artistNameMedia = findViewById<TextView>(id.artist_name_media)

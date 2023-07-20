@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.settings.domain
+package com.practicum.playlistmaker3.settings.domain.api
 
 interface SettingRepository {
     fun themeNight(checked: Boolean)

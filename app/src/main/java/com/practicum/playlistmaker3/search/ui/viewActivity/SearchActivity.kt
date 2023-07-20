@@ -22,6 +22,7 @@ import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
+import com.practicum.playlistmaker3.util.Creator
 
 class SearchActivity : AppCompatActivity() {
 
@@ -69,7 +70,8 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         vm = ViewModelProvider(this,
-            SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
+            SearchViewModel.getViewModelFactory(trackIteractor = Creator.provideTrackIteractor(
+                application)))[SearchViewModel::class.java]
         binding = ActivitySearchBinding.inflate((layoutInflater))
         setContentView(binding.root)
 

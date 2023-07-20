@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.settings.ui.viewModelSettings.SettingsViewModel
+import com.practicum.playlistmaker3.util.Creator
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -20,7 +21,8 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         vm = ViewModelProvider(this,
-            SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
+            SettingsViewModel.getViewModelFactory(Creator.provideSettingIterator(application),
+                Creator.provideSharingIteractor(application)))[SettingsViewModel::class.java]
 
         val buttonBack = findViewById<ImageView>(R.id.back_main)
         val switchNight = findViewById<Switch>(R.id.switch1)

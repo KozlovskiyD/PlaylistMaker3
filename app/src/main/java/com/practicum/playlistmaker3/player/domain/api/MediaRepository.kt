@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.player.domain.setPreparePlayer
+package com.practicum.playlistmaker3.player.domain.api
 
 import com.practicum.playlistmaker3.search.domain.models.Track
 

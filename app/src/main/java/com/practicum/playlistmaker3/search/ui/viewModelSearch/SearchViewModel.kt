@@ -12,13 +12,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker3.search.domain.api.TrackIteractor
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.util.Creator
 
 @Suppress("UNCHECKED_CAST", "UNUSED_EXPRESSION")
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel(application: Application, private val trackIteractor: TrackIteractor) :
+    AndroidViewModel(application) {
 
     private var loadingObserver: ((Boolean) -> Unit)? = null
-    private val trackIteractor = Creator.provideTrackIteractor(getApplication())
+
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<TracksSearchState>()
@@ -99,10 +99,11 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     companion object {
         private val SEARCH_REQUEST_TOKEN = Any()
         const val SEARCH_DELAY = 2000L
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
+        fun getViewModelFactory(trackIteractor: TrackIteractor): ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    SearchViewModel(this[APPLICATION_KEY] as Application, trackIteractor)
+                }
             }
-        }
     }
 }

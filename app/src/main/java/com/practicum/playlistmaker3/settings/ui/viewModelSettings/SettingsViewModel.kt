@@ -8,43 +8,50 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker3.util.Creator
+import com.practicum.playlistmaker3.settings.domain.api.SettingIteractor
+import com.practicum.playlistmaker3.sharing.domain.api.SharingIteractor
 
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val sharingRepository = Creator.getSharingRepository(getApplication())
-    private val settingRepository = Creator.settingRepository(getApplication())
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
+class SettingsViewModel(
+    application: Application,
+    private val settingIteractor: SettingIteractor,
+    private val sharingIteractor: SharingIteractor,
+) : AndroidViewModel(application) {
 
     private var switchCheckedLiveDataMutable = MutableLiveData<Boolean>()
     var switchCheckedLiveData: LiveData<Boolean> = switchCheckedLiveDataMutable
 
     fun saveSwitch(checked: Boolean) {
-        settingRepository.themeNight(checked)
+        settingIteractor.themeNight(checked)
     }
 
     fun switchCheck() {
-        val loadCheck = settingRepository.loadTheme()
+        val loadCheck = settingIteractor.loadTheme()
         switchCheckedLiveDataMutable.value = loadCheck
     }
 
     fun write() {
-        sharingRepository.writeTo()
+        sharingIteractor.writeTo()
     }
 
     fun agreement() {
-        sharingRepository.agreement()
+        sharingIteractor.agreement()
     }
 
     fun share() {
-        sharingRepository.toShareRepository()
+        sharingIteractor.toShareRepository()
+    }
+
+    companion object {
+        fun getViewModelFactory(
+            settingIteractor: SettingIteractor,
+            sharingIteractor: SharingIteractor,
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SettingsViewModel(this[APPLICATION_KEY] as Application,
+                    settingIteractor,
+                    sharingIteractor)
+            }
+        }
     }
 }

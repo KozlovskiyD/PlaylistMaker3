@@ -8,17 +8,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
 import com.practicum.playlistmaker3.player.ui.viewActivity.*
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.util.Creator
 
 @SuppressLint("StaticFieldLeak")
-class TrackViewModel(application: Application) : AndroidViewModel(application) {
-
-    private var mediaRepository = Creator.getMediaRepository(getApplication())
+class TrackViewModel(application: Application, private val mediaIteractor: MediaIteractor) :
+    AndroidViewModel(application) {
 
     private var mediaLiveDataMutable = MutableLiveData<ScreenMediaModel>()
     var mediaLiveData: LiveData<ScreenMediaModel> = mediaLiveDataMutable
@@ -31,15 +31,15 @@ class TrackViewModel(application: Application) : AndroidViewModel(application) {
 
     fun preparePlayer(currentTrackPreviewUrl: Track) {
         playerState = STATE_PREPARED
-        mediaRepository.sendTrack(currentTrackPreviewUrl)
+        mediaIteractor.sendTrack(currentTrackPreviewUrl)
     }
 
     private fun createTime(): Runnable {
-        duration = (mediaRepository.getCurrentTime(true)) / THOUSAND_L
+        duration = (mediaIteractor.getCurrentTime(true)) / THOUSAND_L
         return object : Runnable {
             @SuppressLint("UseCompatLoadingForDrawables")
             override fun run() {
-                currentSecond = (mediaRepository.getCurrentTime(false)) / THOUSAND_L
+                currentSecond = (mediaIteractor.getCurrentTime(false)) / THOUSAND_L
                 screen.time = currentSecond
                 mediaLiveDataMutable.value = screen
                 mainThreadHandler?.postDelayed(this, DELAY_DEFAULT)
@@ -56,7 +56,7 @@ class TrackViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun playbackControl() {
-        mediaRepository.controlPlayState(playerState)
+        mediaIteractor.controlPlayState(playerState)
         when (playerState) {
             STATE_PLAYING -> {
                 screen.playButton = true
@@ -86,10 +86,11 @@ class TrackViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                TrackViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application)
+        fun getViewModelFactory(mediaIteractor: MediaIteractor): ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    TrackViewModel(this[APPLICATION_KEY] as Application, mediaIteractor)
+                }
             }
-        }
     }
 }

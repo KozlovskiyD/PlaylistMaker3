@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker3.sharing.data
 
-import com.practicum.playlistmaker3.sharing.domain.SharingRepository
+import com.practicum.playlistmaker3.sharing.domain.api.SharingRepository
 
 class SharingRepositoryImpl(
     private val toShare: ToShare,
