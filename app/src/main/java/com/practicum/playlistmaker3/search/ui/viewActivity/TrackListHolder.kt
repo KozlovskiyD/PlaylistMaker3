@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.simpleDateFormat
+import com.practicum.playlistmaker3.util.simpleDateFormat
 
 
 class TrackListViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(

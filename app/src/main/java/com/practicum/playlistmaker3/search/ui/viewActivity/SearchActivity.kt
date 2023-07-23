@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.ActivitySearchBinding
@@ -22,7 +21,7 @@ import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
-import com.practicum.playlistmaker3.util.Creator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -36,12 +35,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var youSearch: LinearLayout
     private lateinit var rvSaveList: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var binding: ActivitySearchBinding
+
     private var youSearchClear = false
     private var textRequest = ""
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var vm: SearchViewModel
-    private lateinit var binding: ActivitySearchBinding
+
+    private val vm by viewModel<SearchViewModel>()
 
     private val trackListAdapter = TrackListAdapter {
         vm.saveHistory(it)
@@ -55,6 +56,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private val saveListAdapter = TrackListAdapter {
+        vm.saveHistory(it)
         if (clickDebounce()) {
             Intent(this, MediaActivity::class.java).apply {
                 putExtra(ACTIVITY, true)
@@ -69,9 +71,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        vm = ViewModelProvider(this,
-            SearchViewModel.getViewModelFactory(trackIteractor = Creator.provideTrackIteractor(
-                application)))[SearchViewModel::class.java]
         binding = ActivitySearchBinding.inflate((layoutInflater))
         setContentView(binding.root)
 

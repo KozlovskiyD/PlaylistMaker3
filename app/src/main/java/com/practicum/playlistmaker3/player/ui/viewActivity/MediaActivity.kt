@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
@@ -14,8 +13,8 @@ import com.practicum.playlistmaker3.R.layout
 import com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer.TrackViewModel
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork
-import com.practicum.playlistmaker3.simpleDateFormat
-import com.practicum.playlistmaker3.util.Creator
+import com.practicum.playlistmaker3.util.simpleDateFormat
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
@@ -30,17 +29,13 @@ const val STATE_RELEASE = 4
 @Suppress("CAST_NEVER_SUCCEEDS")
 class MediaActivity : AppCompatActivity() {
 
-    private lateinit var vm: TrackViewModel
+    private val vm by viewModel<TrackViewModel>()
     private lateinit var currentTrack: Track
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_media)
-
-        vm = ViewModelProvider(this,
-            TrackViewModel.getViewModelFactory(Creator.provideMediaIteractor(
-                application)))[(TrackViewModel::class.java)]
 
         val trackNameMedia = findViewById<TextView>(id.track_name)
         val artistNameMedia = findViewById<TextView>(id.artist_name_media)

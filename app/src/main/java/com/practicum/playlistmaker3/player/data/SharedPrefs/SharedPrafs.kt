@@ -1,20 +1,14 @@
 package com.practicum.playlistmaker3.player.data.SharedPrefs
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 
-const val PREVIEW_URL = "previewUrl"
 const val KEY_PREVIEW = "keyPreview"
 
-class SharedPrefs(context: Context) {
-
-    private var sharedPrefs = context.getSharedPreferences(PREVIEW_URL, Context.MODE_PRIVATE)
+class SharedPrefs(private var json: Gson, private val sharedPrefs: SharedPreferences) {
 
     fun sharedPref(currentTrackDto: TrackDto) {
-        val json = Gson().toJson(currentTrackDto)
-        sharedPrefs.edit()
-            .putString(KEY_PREVIEW, json.toString())
-            .apply()
+        sharedPrefs.edit().putString(KEY_PREVIEW, json.toJson(currentTrackDto).toString()).apply()
     }
 }

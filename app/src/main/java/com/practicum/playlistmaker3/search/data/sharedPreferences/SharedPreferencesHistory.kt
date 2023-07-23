@@ -1,14 +1,15 @@
 package com.practicum.playlistmaker3.search.data.sharedPreferences
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker3.search.data.SharedPrefClient
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 
-class SharedPreferences(context: Context) : SharedPrefClient {
-
-    private var sharedPrefs = context.getSharedPreferences(SAVE_TRACKS, Context.MODE_PRIVATE)
+class SharedPreferencesHistory(
+    private var json: Gson,
+    private val sharedPrefs: SharedPreferences,
+) : SharedPrefClient {
 
     override fun loadPref(): List<TrackDto> {
         return saveHistory()
@@ -23,9 +24,8 @@ class SharedPreferences(context: Context) : SharedPrefClient {
         if (indexTrack < 10) listSave.removeAt(indexTrack)
         if (listSave.size >= 10) listSave.removeAt(index = 9)
         listSave.add(0, saveTrack)
-        val json = Gson().toJson(listSave)
         sharedPrefs.edit()
-            .putString(KEY, json.toString())
+            .putString(KEY, json.toJson(listSave).toString())
             .apply()
     }
 
@@ -34,12 +34,12 @@ class SharedPreferences(context: Context) : SharedPrefClient {
     }
 
     private fun saveHistory(): MutableList<TrackDto> {
-        var listSave = mutableListOf<TrackDto>()
+        var listSaveHistory = mutableListOf<TrackDto>()
         val loadGson = sharedPrefs.getString(KEY, "")
         if (loadGson != "") {
-            listSave = Gson().fromJson(loadGson, object : TypeToken<List<TrackDto>>() {}.type)
+            listSaveHistory = json.fromJson(loadGson, object : TypeToken<List<TrackDto>>() {}.type)
         }
-        return listSave
+        return listSaveHistory
     }
 
     companion object {
