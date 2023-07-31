@@ -2,7 +2,7 @@ package com.practicum.playlistmaker3
 
 import android.app.Application
 import com.practicum.playlistmaker3.di.dataModule
-import com.practicum.playlistmaker3.di.iteractorModule
+import com.practicum.playlistmaker3.di.interactorModule
 import com.practicum.playlistmaker3.di.repositoryModule
 import com.practicum.playlistmaker3.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -18,7 +18,7 @@ class MyApp : Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@MyApp)
-            modules(dataModule, repositoryModule, iteractorModule, viewModelModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
     }
 }

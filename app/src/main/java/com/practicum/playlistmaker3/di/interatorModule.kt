@@ -10,7 +10,7 @@ import com.practicum.playlistmaker3.sharing.domain.api.SharingIteractor
 import com.practicum.playlistmaker3.sharing.domain.impl.SharingIteractorImpl
 import org.koin.dsl.module
 
-val iteractorModule = module {
+val interactorModule = module {
 
     single<TrackIteractor> {
         TrackIteractorImpl(get())
