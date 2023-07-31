@@ -1,18 +1,14 @@
 package com.practicum.playlistmaker3.settings.data
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-const val NIGHT_THEME = "night_theme"
 const val NIGHT = "night"
 
-class SaveThemeNight(context: Context) {
-
-    private val sharedPrefSaveTheme =
-        context.getSharedPreferences(NIGHT_THEME, Context.MODE_PRIVATE)
+class SaveThemeNight(private val sharedPrefs: SharedPreferences) {
 
     fun themeNight(checked: Boolean) {
-        sharedPrefSaveTheme.edit().putBoolean(NIGHT, checked).apply()
+        sharedPrefs.edit().putBoolean(NIGHT, checked).apply()
         if (checked) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
@@ -21,11 +17,11 @@ class SaveThemeNight(context: Context) {
     }
 
     fun loadTheme(): Boolean {
-        return sharedPrefSaveTheme.getBoolean(NIGHT, false)
+        return sharedPrefs.getBoolean(NIGHT, false)
     }
 
     fun setTheme() {
-        val darkTheme: Boolean = sharedPrefSaveTheme.getBoolean(NIGHT, false)
+        val darkTheme: Boolean = sharedPrefs.getBoolean(NIGHT, false)
         if (darkTheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {

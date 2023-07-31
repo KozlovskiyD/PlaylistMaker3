@@ -1,9 +1,10 @@
 package com.practicum.playlistmaker3.search.data
 
+
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 import com.practicum.playlistmaker3.search.data.dto.TrackSearchRequest
 import com.practicum.playlistmaker3.search.data.dto.TrackSearchResponse
-import com.practicum.playlistmaker3.search.domain.api.TrackRepository
+import com.practicum.playlistmaker3.search.domain.impl.api.TrackRepository
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.util.Resource
 

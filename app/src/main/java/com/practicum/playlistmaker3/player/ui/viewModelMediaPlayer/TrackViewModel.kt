@@ -1,24 +1,18 @@
 package com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
 import com.practicum.playlistmaker3.player.ui.viewActivity.*
 import com.practicum.playlistmaker3.search.domain.models.Track
 
 @SuppressLint("StaticFieldLeak")
-class TrackViewModel(application: Application, private val mediaIteractor: MediaIteractor) :
-    AndroidViewModel(application) {
+class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
 
     private var mediaLiveDataMutable = MutableLiveData<ScreenMediaModel>()
     var mediaLiveData: LiveData<ScreenMediaModel> = mediaLiveDataMutable
@@ -83,14 +77,5 @@ class TrackViewModel(application: Application, private val mediaIteractor: Media
     fun startCreateTime() {
         mainThreadHandler = Handler(Looper.getMainLooper())
         mainThreadHandler?.post(createTime())
-    }
-
-    companion object {
-        fun getViewModelFactory(mediaIteractor: MediaIteractor): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    TrackViewModel(this[APPLICATION_KEY] as Application, mediaIteractor)
-                }
-            }
     }
 }

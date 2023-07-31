@@ -6,23 +6,18 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.settings.ui.viewModelSettings.SettingsViewModel
-import com.practicum.playlistmaker3.util.Creator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var vm: SettingsViewModel
+    private val vm by viewModel<SettingsViewModel>()
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        vm = ViewModelProvider(this,
-            SettingsViewModel.getViewModelFactory(Creator.provideSettingIterator(application),
-                Creator.provideSharingIteractor(application)))[SettingsViewModel::class.java]
 
         val buttonBack = findViewById<ImageView>(R.id.back_main)
         val switchNight = findViewById<Switch>(R.id.switch1)
@@ -33,6 +28,7 @@ class SettingsActivity : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
+
         vm.switchCheck()
 
         vm.switchCheckedLiveData.observe(this) { check ->
