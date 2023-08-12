@@ -29,6 +29,7 @@
     <dimen name="height_61">61dp</dimen>
     <dimen name="top_82">82dp</dimen>
     <dimen name="top_100">100dp</dimen>
+    <dimen name="top_106">106dp</dimen>
     <dimen name="top_189">189dp</dimen>
 
 </resources>

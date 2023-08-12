@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -16,7 +15,13 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
-
+        <activity
+            android:name=".mediaLibrary.ui.viewActivity.MediaLibrary"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".player.ui.viewActivity.MediaActivity"
             android:exported="false">

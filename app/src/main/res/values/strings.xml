@@ -24,4 +24,9 @@
     <string name="country">Страна</string>
     <string name="urldelov">https://practicum.yandex.ru/android-developer/</string>
     <string name="no_internet">Проверте подключение к интернету</string>
+    <string name="emptyMediaLibrary">Ваша медиатека пуста</string>
+    <string name="emptyPlaylist">Вы не создали \nни одного плейлиста</string>
+    <string name="selectedTrack">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="newPlaylist">Новый плейлист</string>
 </resources>

@@ -6,8 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.main.ui.viewModel.MainViewModel
-import com.practicum.playlistmaker3.player.ui.viewActivity.ACTIVITY
-import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.MediaLibrary
 import com.practicum.playlistmaker3.search.ui.viewActivity.SearchActivity
 import com.practicum.playlistmaker3.settings.ui.viewActivity.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,8 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         val buttonMedia = findViewById<Button>(R.id.media_button)
         buttonMedia.setOnClickListener {
-            Intent(this, MediaActivity::class.java).apply {
-                putExtra(ACTIVITY, false)
+            Intent(this, MediaLibrary::class.java).apply {
                 startActivity(this)
             }
         }
