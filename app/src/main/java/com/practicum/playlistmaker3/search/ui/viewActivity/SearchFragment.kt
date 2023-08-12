@@ -1,20 +1,20 @@
 package com.practicum.playlistmaker3.search.ui.viewActivity
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker3.R
-import com.practicum.playlistmaker3.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker3.player.ui.viewActivity.ACTIVITY
+import com.practicum.playlistmaker3.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
 import com.practicum.playlistmaker3.player.ui.viewActivity.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
@@ -23,7 +23,33 @@ import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
+    private val vm by viewModel<SearchViewModel>()
+
+    private val trackListAdapter = TrackListAdapter {
+        vm.saveHistory(it)
+        if (clickDebounce()) {
+            Intent(requireContext(), MediaActivity::class.java).apply {
+                putExtra(TRACK, it)
+                startActivity(this)
+            }
+        }
+    }
+
+    private val saveListAdapter = TrackListAdapter {
+        vm.saveHistory(it)
+        if (clickDebounce()) {
+            Intent(requireContext(), MediaActivity::class.java).apply {
+                putExtra(TRACK, it)
+                startActivity(this)
+            }
+        }
+    }
+    private val handler = Handler(Looper.getMainLooper())
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var errorMessage: TextView
     private lateinit var clearButton: ImageView
@@ -35,65 +61,38 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var youSearch: LinearLayout
     private lateinit var rvSaveList: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var binding: ActivitySearchBinding
 
     private var youSearchClear = false
     private var textRequest = ""
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
 
-    private val vm by viewModel<SearchViewModel>()
-
-    private val trackListAdapter = TrackListAdapter {
-        vm.saveHistory(it)
-        if (clickDebounce()) {
-            Intent(this, MediaActivity::class.java).apply {
-                putExtra(ACTIVITY, true)
-                putExtra(TRACK, it)
-                startActivity(this)
-            }
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private val saveListAdapter = TrackListAdapter {
-        vm.saveHistory(it)
-        if (clickDebounce()) {
-            Intent(this, MediaActivity::class.java).apply {
-                putExtra(ACTIVITY, true)
-                putExtra(TRACK, it)
-                startActivity(this)
-            }
-        }
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    @SuppressLint("MissingInflatedId", "SuspiciousIndentation", "CommitPrefEdits")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-
-        binding = ActivitySearchBinding.inflate((layoutInflater))
-        setContentView(binding.root)
-
-        errorMessage = findViewById(R.id.errorMessage)
-        clearButton = findViewById(R.id.clearIcon)
-        updateButton = findViewById(R.id.update_button)
-        clearHistory = findViewById(R.id.clear_history)
-        inputEditText = findViewById(R.id.inputEditText)
-        imageError = findViewById(R.id.image_error)
-        rvTrackList = findViewById(R.id.trackList)
-        youSearch = findViewById(R.id.you_search)
-        rvSaveList = findViewById(R.id.save_list)
-        progressBar = findViewById(R.id.progressBar)
-
-        val buttonBack = findViewById<ImageView>(R.id.back_main)
-        buttonBack.setOnClickListener {
-            finish()
-        }
+        errorMessage = binding.errorMessage
+        clearButton = binding.clearIcon
+        updateButton = binding.updateButton
+        clearHistory = binding.clearHistory
+        inputEditText = binding.inputEditText
+        imageError = binding.imageError
+        rvTrackList = binding.trackList
+        youSearch = binding.youSearch
+        rvSaveList = binding.saveList
+        progressBar = binding.progressBar
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
             trackListAdapter.setTracks(null)
-            hideTheKeyboard(clearButton)
+            context?.hideTheKeyboard(clearButton)
         }
 
         clearHistory.setOnClickListener {
@@ -127,11 +126,11 @@ class SearchActivity : AppCompatActivity() {
 
         simpleTextWatcher.let { inputEditText.addTextChangedListener(it) }
 
-        vm.observeState().observe(this) {
+        vm.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        vm.observeShowToast().observe(this) {
+        vm.observeShowToast().observe(viewLifecycleOwner) {
             showToast(it)
         }
 
@@ -202,11 +201,11 @@ class SearchActivity : AppCompatActivity() {
         binding.progressBar.isVisible = false
         saveListAdapter.setTracks(listHistory)
         rvSaveList.adapter = saveListAdapter
-        youSearchClear = true
+        if (!listHistory.isNullOrEmpty()) youSearchClear = true
     }
 
     private fun showToast(additionalMessage: String) {
-        Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
+        Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG)
             .show()
     }
 
@@ -237,14 +236,10 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SAVE_TEXT, saveEditText)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState.getString(SAVE_TEXT).toString()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         vm.removeLoadingObserver()
+        _binding = null
     }
 
     companion object {
