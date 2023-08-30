@@ -10,25 +10,14 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/top_4"
         android:layout_marginTop="@dimen/top_4">
-
-        <ImageView
-            android:id="@+id/back_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/top_padding"
-            android:layout_marginTop="@dimen/top_padding"
-            android:backgroundTint="@color/white"
-            android:src="@drawable/vector_the_arrow"
-            android:contentDescription="@string/setting"/>
 
         <TextView
             style="@style/headingText"
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
             android:layout_marginTop = "@dimen/top_padding"
-            android:layout_marginStart = "@dimen/top_28"
+            android:layout_marginStart = "@dimen/top_padding"
             android:text="@string/setting"/>
 
     </androidx.appcompat.widget.Toolbar>

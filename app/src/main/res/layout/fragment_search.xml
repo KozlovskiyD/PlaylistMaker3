@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/top_padding"
-    android:theme="@style/Theme.PlaylistMaker">
+    android:paddingHorizontal="@dimen/top_padding">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -15,19 +15,11 @@
         android:layout_marginStart="-12dp"
         android:layout_marginTop="@dimen/top_4">
 
-        <ImageView
-            android:id="@+id/back_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:contentDescription="@string/setting"
-            android:src="@drawable/vector_the_arrow" />
-
         <TextView
             style="@style/headingText"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/top_40"
+            android:layout_marginStart="@dimen/top_padding"
             android:layout_marginTop="@dimen/top_padding"
             android:text="@string/search" />
 

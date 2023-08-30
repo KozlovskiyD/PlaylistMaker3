@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.PlaylistMaker"
-    tools:context=".mediaLibrary.ui.viewActivity.MediaLibrary">
+    android:theme="@style/Theme.PlaylistMaker">
 
     <TextView
         android:id="@+id/message_Empty"

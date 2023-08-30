@@ -18,7 +18,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
-const val ACTIVITY = "activity"
 const val TRACK = "track"
 const val STATE_DEFAULT = 0
 const val STATE_PREPARED = 1
@@ -50,44 +49,42 @@ class MediaActivity : AppCompatActivity() {
         val timer = findViewById<TextView>(id.timer)
         cover.setImageResource(R.drawable.vector_placeholder_big)
 
-        val activity = intent.getBooleanExtra(ACTIVITY, false)
-        if (activity) {
-            currentTrack =
-                intent.getSerializableExtra(TRACK) as Track                                                                   //получить трек из searchActivity
+        currentTrack =
+            intent.getSerializableExtra(TRACK) as Track                                                                   //получить трек из searchActivity
 
-            artistNameMedia.text = currentTrack.artistName
-            trackNameMedia.text = currentTrack.trackName
-            year.text = currentTrack.releaseDate
-            genre.text = currentTrack.primaryGenreName
-            country.text = currentTrack.country
-            durationTrack.text = simpleDateFormat(currentTrack.trackTimeMillis)
-            timer.text = simpleDateFormat("0")
-            if (currentTrack.collectionName.isNotEmpty()) album.text = currentTrack.collectionName
+        artistNameMedia.text = currentTrack.artistName
+        trackNameMedia.text = currentTrack.trackName
+        year.text = currentTrack.releaseDate
+        genre.text = currentTrack.primaryGenreName
+        country.text = currentTrack.country
+        durationTrack.text = simpleDateFormat(currentTrack.trackTimeMillis)
+        timer.text = simpleDateFormat("0")
+        if (currentTrack.collectionName.isNotEmpty()) album.text = currentTrack.collectionName
 
-            Glide
-                .with(applicationContext)
-                .load(getCoverArtwork(currentTrack.artworkUrl100))
-                .placeholder(R.drawable.vector_placeholder_big)
-                .centerCrop()
-                .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
-                .into(cover)
+        Glide
+            .with(applicationContext)
+            .load(getCoverArtwork(currentTrack.artworkUrl100))
+            .placeholder(R.drawable.vector_placeholder_big)
+            .centerCrop()
+            .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
+            .into(cover)
 
-            vm.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
+        vm.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
 
-            vm.mediaLiveData.observe(this) { screen ->
-                if (screen.playButton) buttonPlay.setImageResource(R.drawable.button_play)                   //управление воспроизведением
-                else buttonPlay.setImageResource(R.drawable.vector_pause)
+        vm.mediaLiveData.observe(this) { screen ->
+            if (screen.playButton) buttonPlay.setImageResource(R.drawable.button_play)                   //управление воспроизведением
+            else buttonPlay.setImageResource(R.drawable.vector_pause)
 
-                timer.text = String.format("%02d : %02d",
-                    screen.time / 60,
-                    screen.time % 60)                                                                                                            //время воспроизведения
-            }
-
-            buttonPlay.setOnClickListener {
-                vm.playbackControl()
-                vm.startCreateTime()
-            }
+            timer.text = String.format("%02d : %02d",
+                screen.time / 60,
+                screen.time % 60)                                                                                                            //время воспроизведения
         }
+
+        buttonPlay.setOnClickListener {
+            vm.playbackControl()
+            vm.startCreateTime()
+        }
+
         buttonBack.setOnClickListener {
             finish()
         }
