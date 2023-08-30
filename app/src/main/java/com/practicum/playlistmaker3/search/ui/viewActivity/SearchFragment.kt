@@ -2,17 +2,15 @@ package com.practicum.playlistmaker3.search.ui.viewActivity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.lifecycleScope
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
@@ -21,14 +19,17 @@ import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
 
-    private val vm by viewModel<SearchViewModel>()
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val trackListAdapter = TrackListAdapter {
-        vm.saveHistory(it)
+        viewModel.saveHistory(it)
+        youSearchClear = true
         if (clickDebounce()) {
             Intent(requireContext(), MediaActivity::class.java).apply {
                 putExtra(TRACK, it)
@@ -36,31 +37,9 @@ class SearchFragment : Fragment() {
             }
         }
     }
-
-    private val saveListAdapter = TrackListAdapter {
-        vm.saveHistory(it)
-        if (clickDebounce()) {
-            Intent(requireContext(), MediaActivity::class.java).apply {
-                putExtra(TRACK, it)
-                startActivity(this)
-            }
-        }
-    }
-    private val handler = Handler(Looper.getMainLooper())
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var errorMessage: TextView
-    private lateinit var clearButton: ImageView
-    private lateinit var imageError: ImageView
-    private lateinit var updateButton: Button
-    private lateinit var clearHistory: Button
-    private lateinit var inputEditText: EditText
-    private lateinit var rvTrackList: RecyclerView
-    private lateinit var youSearch: LinearLayout
-    private lateinit var rvSaveList: RecyclerView
-    private lateinit var progressBar: ProgressBar
 
     private var youSearchClear = false
     private var textRequest = ""
@@ -78,16 +57,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        errorMessage = binding.errorMessage
-        clearButton = binding.clearIcon
-        updateButton = binding.updateButton
-        clearHistory = binding.clearHistory
-        inputEditText = binding.inputEditText
-        imageError = binding.imageError
-        rvTrackList = binding.trackList
-        youSearch = binding.youSearch
-        rvSaveList = binding.saveList
-        progressBar = binding.progressBar
+        val clearButton = binding.clearIcon
+        val inputEditText = binding.inputEditText
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -95,55 +66,55 @@ class SearchFragment : Fragment() {
             context?.hideTheKeyboard(clearButton)
         }
 
-        clearHistory.setOnClickListener {
-            saveListAdapter.setTracks(null)
+        binding.clearHistory.setOnClickListener {
+            trackListAdapter.setTracks(null)
             youSearchClear = false
-            youSearch.visibility = View.GONE
-            rvTrackList.visibility = View.VISIBLE
-            vm.clearHistory()
+            binding.youSearchText.isVisible = false
+            binding.clearHistory.isVisible = false
+            binding.trackList.isVisible = true
+            viewModel.clearHistory()
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            vm.loadHistory()
-            youSearch.visibility =
-                if (hasFocus && youSearchClear && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
-            rvTrackList.visibility =
-                if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
+            viewModel.loadHistory()
+            binding.youSearchText.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
+            binding.clearHistory.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
+            binding.trackList.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
         }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.isEmpty() == true) vm.loadHistory()
+                if (s?.isEmpty() == true) {
+                    viewModel.loadHistory()
+                }
                 textRequest = inputEditText.text.toString()
-                vm.searchDebounce(s?.toString() ?: "")
-                clearButtonVisibility(s)
-                listsVisibility(s)
+                viewModel.searchDebounce(s?.toString() ?: "")
+                clearButtonAndListsVisibility(s)
             }
-
             override fun afterTextChanged(s: Editable?) {}
         }
 
         simpleTextWatcher.let { inputEditText.addTextChangedListener(it) }
 
-        vm.observeState().observe(viewLifecycleOwner) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        vm.observeShowToast().observe(viewLifecycleOwner) {
+        viewModel.observeShowToast().observe(viewLifecycleOwner) {
             showToast(it)
         }
 
-        updateButton.setOnClickListener {
-            vm.requestOnListTrack(textRequest)
+        binding.updateButton.setOnClickListener {
+            viewModel.requestOnListTrack(textRequest)
         }
     }
 
     private fun showMessage() {
         trackListAdapter.setTracks(null)
-        imageError.visibility = View.VISIBLE
-        errorMessage.visibility = View.VISIBLE
-        rvTrackList.visibility = View.GONE
+        binding.imageError.isVisible = true
+        binding.errorMessage.isVisible = true
+        binding.trackList.isVisible = false
         binding.progressBar.isVisible = false
     }
 
@@ -167,41 +138,40 @@ class SearchFragment : Fragment() {
 
     private fun showContent(tracks: List<Track>) {
         trackListAdapter.setTracks(tracks)
-        rvTrackList.adapter = trackListAdapter
-        rvTrackList.visibility = View.VISIBLE
-        imageError.visibility = View.GONE
-        errorMessage.visibility = View.GONE
-        updateButton.visibility = View.GONE
+        binding.trackList.adapter = trackListAdapter
+        binding.trackList.isVisible = true
+        binding.imageError.isVisible = false
+        binding.errorMessage.isVisible = false
+        binding.updateButton.isVisible = false
     }
 
     private fun showEmpty() {
         showMessage()
-        imageError.setImageResource(R.drawable.vector_not_found)
-        errorMessage.text = getString(R.string.not_found)
-        updateButton.visibility = View.GONE
+        binding.imageError.setImageResource(R.drawable.vector_not_found)
+        binding.errorMessage.text = getString(R.string.not_found)
+        binding.updateButton.isVisible = false
     }
 
     private fun showError() {
         showMessage()
-        imageError.setImageResource(R.drawable.vector_no_signal)
-        errorMessage.text = getString(R.string.no_signal)
-        updateButton.visibility = View.VISIBLE
+        binding.imageError.setImageResource(R.drawable.vector_no_signal)
+        binding.errorMessage.text = getString(R.string.no_signal)
+        binding.updateButton.isVisible = true
         showToast(getString(R.string.no_internet))
     }
 
     private fun showLoading() {
-        errorMessage.visibility = View.GONE
-        rvTrackList.visibility = View.GONE
-        imageError.visibility = View.GONE
+        binding.errorMessage.isVisible = false
+        binding.trackList.isVisible = false
+        binding.imageError.isVisible = false
         binding.progressBar.isVisible = true
         binding.updateButton.isVisible = false
     }
 
     private fun showHistory(listHistory: List<Track>) {
         binding.progressBar.isVisible = false
-        saveListAdapter.setTracks(listHistory)
-        rvSaveList.adapter = saveListAdapter
-        if (!listHistory.isNullOrEmpty()) youSearchClear = true
+        trackListAdapter.setTracks(listHistory)
+        binding.trackList.adapter = trackListAdapter
     }
 
     private fun showToast(additionalMessage: String) {
@@ -209,23 +179,21 @@ class SearchFragment : Fragment() {
             .show()
     }
 
-    private fun listsVisibility(s: CharSequence?) {
-        youSearch.visibility =
-            if (youSearchClear && s?.isEmpty() == true) View.VISIBLE else View.GONE
-        rvTrackList.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?) {
-        return if (s.isNullOrEmpty()) {
-            clearButton.visibility = View.GONE
-        } else clearButton.visibility = View.VISIBLE
+    private fun clearButtonAndListsVisibility(s: CharSequence?) {
+        binding.clearIcon.isVisible = !s.isNullOrEmpty()
+        binding.youSearchText.isVisible = s.isNullOrEmpty() && youSearchClear
+        binding.clearHistory.isVisible = s.isNullOrEmpty() && youSearchClear
+        binding.trackList.isVisible = s.isNullOrEmpty() && youSearchClear
     }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
@@ -238,7 +206,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        vm.removeLoadingObserver()
+        viewModel.removeLoadingObserver()
         _binding = null
     }
 

@@ -14,7 +14,7 @@ class SelectedTrackFragment : Fragment() {
         fun newInstance() = SelectedTrackFragment()
     }
 
-    private val vm by viewModel<TrackFragmentViewModel>()
+    private val viewModel by viewModel<TrackFragmentViewModel>()
     private var _binding: FragmentSelectedTrackBinding? = null
     private val binding get() = _binding!!
 

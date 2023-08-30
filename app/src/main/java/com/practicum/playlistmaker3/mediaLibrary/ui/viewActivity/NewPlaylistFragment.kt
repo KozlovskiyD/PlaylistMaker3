@@ -15,7 +15,7 @@ class NewPlaylistFragment : Fragment() {
         fun newInstance() = NewPlaylistFragment()
     }
 
-    private val vm by viewModel<PlaylistFragmentViewModel>()
+    private val viewModel by viewModel<PlaylistFragmentViewModel>()
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
 

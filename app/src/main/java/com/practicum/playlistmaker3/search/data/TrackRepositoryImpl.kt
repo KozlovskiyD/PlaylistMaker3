@@ -7,19 +7,22 @@ import com.practicum.playlistmaker3.search.data.dto.TrackSearchResponse
 import com.practicum.playlistmaker3.search.domain.impl.api.TrackRepository
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
     private val sharedPrefClient: SharedPrefClient,
 ) : TrackRepository {
 
-    override fun searchTrack(expression: String): Resource<List<Track>> {
+    override  fun searchTrack(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.request(TrackSearchRequest(expression))
-        return when (response.resultCode) {
-            -1 -> Resource.Error("false")
+        when (response.resultCode) {
+            -1 -> emit(Resource.Error("false"))
             200 -> {
-                Resource.Success((response as TrackSearchResponse).results.map {
-                    Track(it.trackId,
+                emit(Resource.Success((response as TrackSearchResponse).results.map {
+                    Track(
+                        it.trackId,
                         it.trackName,
                         it.artistName,
                         it.trackTimeMillis,
@@ -28,11 +31,13 @@ class TrackRepositoryImpl(
                         it.releaseDate,
                         it.primaryGenreName,
                         it.country,
-                        it.previewUrl)
+                        it.previewUrl
+                    )
                 }
                 )
+                )
             }
-            else -> Resource.Error("true")
+            else -> emit(Resource.Error("true"))
         }
     }
 
@@ -65,7 +70,8 @@ class TrackRepositoryImpl(
 
     private fun trackDtoToTrack(list: List<TrackDto>): List<Track> {
         return list.map {
-            Track(it.trackId,
+            Track(
+                it.trackId,
                 it.trackName,
                 it.artistName,
                 it.trackTimeMillis,

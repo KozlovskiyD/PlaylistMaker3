@@ -1,19 +1,19 @@
 package com.practicum.playlistmaker3.search.ui.viewModelSearch
 
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker3.search.domain.impl.api.TrackIteractor
 import com.practicum.playlistmaker3.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Suppress("UNCHECKED_CAST", "UNUSED_EXPRESSION")
 class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() {
 
     private var loadingObserver: ((Boolean) -> Unit)? = null
-
-    private val handler = android.os.Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<TracksSearchState>()
     fun observeState(): LiveData<TracksSearchState> = stateLiveData
@@ -22,23 +22,18 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
     fun observeShowToast(): LiveData<String> = showToast
 
     private var latestSearchText: String? = null
-
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+    private var searchJob: Job? = null
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) {
             return
         }
         this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { requestOnListTrack(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DELAY
-        handler.postAtTime(searchRunnable, SEARCH_REQUEST_TOKEN, postTime)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DELAY)
+            requestOnListTrack(changedText)
+        }
     }
 
     fun saveHistory(saveList: Track) {
@@ -62,26 +57,29 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
         if (newSearchText.isNotEmpty()) {
             renderState(TracksSearchState.Loading)
 
-            trackIteractor.searchTrack(newSearchText, object : TrackIteractor.TrackConsumer {
-                override fun consume(foundTrack: List<Track>?, additionalMessage: String?) {
-
-                    when (additionalMessage) {
-                        "false" -> {
-                            renderState(TracksSearchState.Error)
-                        }
-                        "true" -> {
-                            renderState(
-                                TracksSearchState.Empty)
-                        }
-                        else -> {
-                            val currentTracks = mutableListOf<Track>().also {
-                                it.addAll(foundTrack!!)
-                            }
-                            renderState(TracksSearchState.Content(currentTracks = currentTracks))
-                        }
-                    }
+            viewModelScope.launch {
+                trackIteractor.searchTrack(newSearchText).collect { pair ->
+                    processResult(pair.first, pair.second)
                 }
-            })
+            }
+        }
+    }
+
+    private fun processResult(foundTrack: List<Track>?, additionalMessage: String?){
+        when (additionalMessage) {
+            "false" -> {
+                renderState(TracksSearchState.Error)
+            }
+            "true" -> {
+                renderState(
+                    TracksSearchState.Empty)
+            }
+            else -> {
+                val currentTracks = mutableListOf<Track>().also {
+                    it.addAll(foundTrack!!)
+                }
+                renderState(TracksSearchState.Content(currentTracks = currentTracks))
+            }
         }
     }
 
@@ -90,7 +88,6 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
     }
 
     companion object {
-        private val SEARCH_REQUEST_TOKEN = Any()
         const val SEARCH_DELAY = 2000L
     }
 }

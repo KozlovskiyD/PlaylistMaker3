@@ -67,14 +67,37 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/you_search_text"
+        style="@style/searchText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/top_padding"
+        android:layout_marginTop="@dimen/top_48"
+        android:text="@string/you_search"
+        android:textFontWeight="500"
+        android:textAlignment="center"
+        android:textSize="19sp"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trackList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/top_padding"
         android:background="?attr/colorSecondary"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <Button
+        style="@style/update_button"
+        android:id="@+id/clear_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/top_24"
+        android:text="@string/clear_history"
+        android:visibility="gone"/>
 
     <ProgressBar android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -112,43 +135,5 @@
         android:layout_marginTop="@dimen/top_24"
         android:text="@string/update"
         android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/you_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <TextView
-            style="@style/searchText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/top_padding"
-            android:layout_marginTop="@dimen/top_48"
-            android:text="@string/you_search"
-            android:textFontWeight="500"
-            android:textAlignment="center"
-            android:textSize="19sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/save_list"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_height"
-            android:layout_weight="1"
-            android:layout_marginTop="@dimen/top_24"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:ignore="InefficientWeight" />
-
-        <Button
-            style="@style/update_button"
-            android:id="@+id/clear_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/top_24"
-            android:text="@string/clear_history" />
-
-    </LinearLayout>
-
 </LinearLayout>
 
