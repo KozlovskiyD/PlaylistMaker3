@@ -12,7 +12,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private val vm by viewModel<SettingsViewModel>()
+    private val viewModel by viewModel<SettingsViewModel>()
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -35,27 +35,27 @@ class SettingsFragment : Fragment() {
         val buttonWriteTo = binding.shar
         val buttonUserAgreement = binding.userAgreement
 
-        vm.switchCheck()
+        viewModel.switchCheck()
 
-        vm.switchCheckedLiveData.observe(viewLifecycleOwner) { check ->
+        viewModel.switchCheckedLiveData.observe(viewLifecycleOwner) { check ->
             switchNight.isChecked = check
         }
 
         switchNight.setOnCheckedChangeListener { _, checked ->
-            vm.saveSwitch(checked)
+            viewModel.saveSwitch(checked)
 
         }
 
         buttonShare.setOnClickListener {
-            vm.write()
+            viewModel.write()
         }
 
         buttonWriteTo.setOnClickListener {
-            vm.share()
+            viewModel.share()
         }
 
         buttonUserAgreement.setOnClickListener {
-            vm.agreement()
+            viewModel.agreement()
         }
     }
 

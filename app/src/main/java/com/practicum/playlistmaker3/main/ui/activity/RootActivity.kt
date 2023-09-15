@@ -12,7 +12,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RootActivity : AppCompatActivity() {
 
-    private val vm by viewModel<MainViewModel>()
+    private val viewModel by viewModel<MainViewModel>()
 
     private var _binding: ActivityRootBinding? = null
     private val binding get() = _binding!!
@@ -22,7 +22,7 @@ class RootActivity : AppCompatActivity() {
         _binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vm.setTheme()
+        viewModel.setTheme()
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment

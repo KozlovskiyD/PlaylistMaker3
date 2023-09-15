@@ -1,15 +1,20 @@
 package com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
-import com.practicum.playlistmaker3.player.ui.viewActivity.*
+import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_DEFAULT
+import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PAUSED
+import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PLAYING
+import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PREPARED
 import com.practicum.playlistmaker3.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
 class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
@@ -18,7 +23,7 @@ class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
     var mediaLiveData: LiveData<ScreenMediaModel> = mediaLiveDataMutable
 
     private var playerState = STATE_DEFAULT
-    var mainThreadHandler: Handler? = null
+    private var timerJob: Job? = null
     var duration = 0L
     var currentSecond = 0L
     var screen = ScreenMediaModel(false, 0L)
@@ -28,19 +33,16 @@ class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
         mediaIteractor.sendTrack(currentTrackPreviewUrl)
     }
 
-    private fun createTime(): Runnable {
-        duration = (mediaIteractor.getCurrentTime(true)) / THOUSAND_L
-        return object : Runnable {
-            @SuppressLint("UseCompatLoadingForDrawables")
-            override fun run() {
-                currentSecond = (mediaIteractor.getCurrentTime(false)) / THOUSAND_L
+     fun startCreateTime(){
+        duration = (mediaIteractor.getCurrentTime(true))
+        timerJob = viewModelScope.launch {
+            while (playerState == STATE_PLAYING) {
+                delay(300L)
+                currentSecond = (mediaIteractor.getCurrentTime(false))
                 screen.time = currentSecond
                 mediaLiveDataMutable.value = screen
-                mainThreadHandler?.postDelayed(this, DELAY_DEFAULT)
-                if (duration == currentSecond) {
-                    stopTimer()
+                if (currentSecond >= duration) {
                     screen.playButton = true
-                    mediaLiveDataMutable.value = screen
                     screen.time = 0L
                     mediaLiveDataMutable.value = screen
                     playerState = STATE_PREPARED
@@ -52,30 +54,26 @@ class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
     fun playbackControl() {
         mediaIteractor.controlPlayState(playerState)
         when (playerState) {
-            STATE_PLAYING -> {
-                screen.playButton = true
-                mediaLiveDataMutable.value = screen
-                playerState = STATE_PAUSED
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                screen.playButton = false
-                mediaLiveDataMutable.value = screen
-                playerState = STATE_PLAYING
-            }
+            STATE_PLAYING -> playerPause()
+            STATE_PREPARED, STATE_PAUSED -> playerStart()
         }
+    }
+
+    private fun playerStart(){
+        screen.playButton = false
+        mediaLiveDataMutable.value = screen
+        playerState = STATE_PLAYING
+    }
+
+    private fun playerPause(){
+        timerJob?.cancel()
+        screen.playButton = true
+        mediaLiveDataMutable.value = screen
+        playerState = STATE_PAUSED
     }
 
     fun playerStateChange(state: Int) {
         playerState = state
         playbackControl()
-    }
-
-    fun stopTimer() {
-        mainThreadHandler?.removeCallbacksAndMessages(null)
-    }
-
-    fun startCreateTime() {
-        mainThreadHandler = Handler(Looper.getMainLooper())
-        mainThreadHandler?.post(createTime())
     }
 }

@@ -14,7 +14,8 @@ class MediaLibraryFragment : Fragment() {
     private var _binding: FragmentMediaLibraryBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var tabLayoutMediator: TabLayoutMediator
+    private var _tabLayoutMediator: TabLayoutMediator? = null
+    private val  tabLayoutMediator get() = _tabLayoutMediator!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +30,7 @@ class MediaLibraryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
 
-        tabLayoutMediator =
+        _tabLayoutMediator =
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 when (position) {
                     0 -> tab.text = getString(R.string.selectedTrack)

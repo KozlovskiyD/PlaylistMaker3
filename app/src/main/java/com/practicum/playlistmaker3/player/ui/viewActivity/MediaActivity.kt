@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker3.player.ui.viewActivity
 
+//import android.os.Build.VERSION_CODES.R
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ImageView
@@ -16,7 +17,6 @@ import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork
 import com.practicum.playlistmaker3.util.simpleDateFormat
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val DELAY_DEFAULT = 500L
 const val THOUSAND_L = 1000L
 const val TRACK = "track"
 const val STATE_DEFAULT = 0
@@ -28,7 +28,8 @@ const val STATE_RELEASE = 4
 @Suppress("CAST_NEVER_SUCCEEDS")
 class MediaActivity : AppCompatActivity() {
 
-    private val vm by viewModel<TrackViewModel>()
+    private val viewModel by viewModel<TrackViewModel>()
+
     private lateinit var currentTrack: Track
 
     @SuppressLint("SuspiciousIndentation")
@@ -69,20 +70,20 @@ class MediaActivity : AppCompatActivity() {
             .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
             .into(cover)
 
-        vm.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
+        viewModel.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
 
-        vm.mediaLiveData.observe(this) { screen ->
+        viewModel.mediaLiveData.observe(this) { screen ->
             if (screen.playButton) buttonPlay.setImageResource(R.drawable.button_play)                   //управление воспроизведением
             else buttonPlay.setImageResource(R.drawable.vector_pause)
 
             timer.text = String.format("%02d : %02d",
-                screen.time / 60,
-                screen.time % 60)                                                                                                            //время воспроизведения
+                (screen.time / THOUSAND_L) / 60,
+                (screen.time / THOUSAND_L) % 60)                                                                                                            //время воспроизведения
         }
 
         buttonPlay.setOnClickListener {
-            vm.playbackControl()
-            vm.startCreateTime()
+            viewModel.playbackControl()
+            viewModel.startCreateTime()
         }
 
         buttonBack.setOnClickListener {
@@ -92,16 +93,11 @@ class MediaActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        vm.playerStateChange(STATE_PLAYING)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        vm.stopTimer()
+        viewModel.playerStateChange(STATE_PLAYING)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        vm.playerStateChange(STATE_RELEASE)
+        viewModel.playerStateChange(STATE_RELEASE)
     }
 }
