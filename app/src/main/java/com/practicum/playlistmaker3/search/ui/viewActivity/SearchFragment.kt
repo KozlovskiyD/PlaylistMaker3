@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
@@ -19,8 +18,6 @@ import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -29,8 +26,9 @@ class SearchFragment : Fragment() {
 
     private val trackListAdapter = TrackListAdapter {
         viewModel.saveHistory(it)
+        viewModel.clickDebounce()
         youSearchClear = true
-        if (clickDebounce()) {
+        if (isClickAllowed) {
             Intent(requireContext(), MediaActivity::class.java).apply {
                 putExtra(TRACK, it)
                 startActivity(this)
@@ -77,8 +75,10 @@ class SearchFragment : Fragment() {
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             viewModel.loadHistory()
-            binding.youSearchText.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
-            binding.clearHistory.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
+            binding.youSearchText.isVisible =
+                hasFocus && youSearchClear && inputEditText.text.isEmpty()
+            binding.clearHistory.isVisible =
+                hasFocus && youSearchClear && inputEditText.text.isEmpty()
             binding.trackList.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
         }
 
@@ -92,6 +92,7 @@ class SearchFragment : Fragment() {
                 viewModel.searchDebounce(s?.toString() ?: "")
                 clearButtonAndListsVisibility(s)
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
 
@@ -103,6 +104,10 @@ class SearchFragment : Fragment() {
 
         viewModel.observeShowToast().observe(viewLifecycleOwner) {
             showToast(it)
+        }
+
+        viewModel.observeClickDebounce().observe(viewLifecycleOwner) {
+            isClickAllowed = it
         }
 
         binding.updateButton.setOnClickListener {
@@ -143,6 +148,7 @@ class SearchFragment : Fragment() {
         binding.imageError.isVisible = false
         binding.errorMessage.isVisible = false
         binding.updateButton.isVisible = false
+        binding.progressBar.isVisible = false
     }
 
     private fun showEmpty() {
@@ -184,18 +190,6 @@ class SearchFragment : Fragment() {
         binding.youSearchText.isVisible = s.isNullOrEmpty() && youSearchClear
         binding.clearHistory.isVisible = s.isNullOrEmpty() && youSearchClear
         binding.trackList.isVisible = s.isNullOrEmpty() && youSearchClear
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

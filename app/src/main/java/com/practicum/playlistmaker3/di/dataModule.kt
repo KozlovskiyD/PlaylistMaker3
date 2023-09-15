@@ -2,7 +2,9 @@ package com.practicum.playlistmaker3.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
+import com.practicum.playlistmaker3.mediaLibrary.data.db.TracksDatabase
 import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
 import com.practicum.playlistmaker3.player.data.mediaPlayer.GetMediaPlayer
 import com.practicum.playlistmaker3.player.data.mediaPlayer.MediaPlayers
@@ -47,6 +49,12 @@ val dataModule = module {
     }
     single<NetworkClient> {
         RetrofitNetworkClient(get(), get())
+    }
+
+    //mediaLibrary
+
+    single {
+        Room.databaseBuilder(androidContext(), TracksDatabase::class.java, "database.db").build()
     }
 
     //player

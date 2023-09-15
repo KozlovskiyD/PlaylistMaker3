@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker3.player.ui.viewActivity
 
-//import android.os.Build.VERSION_CODES.R
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ImageView
@@ -32,7 +32,7 @@ class MediaActivity : AppCompatActivity() {
 
     private lateinit var currentTrack: Track
 
-    @SuppressLint("SuspiciousIndentation")
+    @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_media)
@@ -48,10 +48,13 @@ class MediaActivity : AppCompatActivity() {
         val cover = findViewById<ImageView>(id.cover)
         val buttonPlay = findViewById<ImageView>(id.button_play)
         val timer = findViewById<TextView>(id.timer)
+        val buttonIsFavorite = findViewById<ImageView>(id.button_Is_favorite)
         cover.setImageResource(R.drawable.vector_placeholder_big)
 
         currentTrack =
             intent.getSerializableExtra(TRACK) as Track                                                                   //получить трек из searchActivity
+
+        viewModel.preparePlayer(currentTrack)                                                                            //подготовить MediaPlayer
 
         artistNameMedia.text = currentTrack.artistName
         trackNameMedia.text = currentTrack.trackName
@@ -70,21 +73,42 @@ class MediaActivity : AppCompatActivity() {
             .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
             .into(cover)
 
-        viewModel.preparePlayer(currentTrack)                                                                                             //подготовить MediaPlayer
+        viewModel.isFavoriteTrackListId(currentTrack.trackId)
+
+        viewModel.isFavoriteLiveData.observe(this) { screen ->
+            if (screen.isFavorite) {
+                buttonIsFavorite.setImageResource(R.drawable.button_favorite_on)
+                currentTrack.isFavorite = true
+            } else buttonIsFavorite.setImageResource(R.drawable.button_favorite_off)
+        }
 
         viewModel.mediaLiveData.observe(this) { screen ->
             if (screen.playButton) buttonPlay.setImageResource(R.drawable.button_play)                   //управление воспроизведением
             else buttonPlay.setImageResource(R.drawable.vector_pause)
 
-            timer.text = String.format("%02d : %02d",
+            timer.text = String.format(
+                "%02d:%02d",
                 (screen.time / THOUSAND_L) / 60,
-                (screen.time / THOUSAND_L) % 60)                                                                                                            //время воспроизведения
+                (screen.time / THOUSAND_L) % 60
+            )                                                                                                            //время воспроизведения
         }
 
         buttonPlay.setOnClickListener {
             viewModel.playbackControl()
             viewModel.startCreateTime()
         }
+
+        buttonIsFavorite.setOnClickListener {
+            if (currentTrack.isFavorite) {
+                buttonIsFavorite.setImageResource(R.drawable.button_favorite_off)
+                currentTrack.isFavorite = false
+            } else {
+                buttonIsFavorite.setImageResource(R.drawable.button_favorite_on)
+                currentTrack.isFavorite = true
+            }
+            viewModel.onFavoriteClicked(currentTrack)
+        }
+
 
         buttonBack.setOnClickListener {
             finish()

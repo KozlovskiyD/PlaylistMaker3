@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker3.di
 
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.impl.IsFavoriteInteractorImpl
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.impl.MediaIteractorImpl
 import com.practicum.playlistmaker3.search.domain.impl.TrackIteractorImpl
@@ -26,5 +28,9 @@ val interactorModule = module {
 
     single<SharingIteractor> {
         SharingIteractorImpl(get())
+    }
+
+    single<IsFavoriteInteractor> {
+        IsFavoriteInteractorImpl(get())
     }
 }
