@@ -10,9 +10,6 @@ import com.practicum.playlistmaker3.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-const val ERROR = "error"
-const val EMPTY = "empty"
-
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
     private val sharedPrefClient: SharedPrefClient,
@@ -84,5 +81,10 @@ class TrackRepositoryImpl(
                 it.previewUrl
             )
         }
+    }
+    companion object{
+        private const val ERROR = "error"
+        private const val EMPTY = "empty"
+
     }
 }

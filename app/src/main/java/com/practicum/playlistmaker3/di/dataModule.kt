@@ -23,7 +23,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-const val HTTP_ITUNES = "http://itunes.apple.com"
+
+private const val HTTP_ITUNES = "http://itunes.apple.com"
 val dataModule = module {
 
     //search
@@ -72,7 +73,7 @@ val dataModule = module {
     //setting
 
     single {
-        SaveThemeNight(get())
+        SaveThemeNight(get(),)
     }
 
     //sharing

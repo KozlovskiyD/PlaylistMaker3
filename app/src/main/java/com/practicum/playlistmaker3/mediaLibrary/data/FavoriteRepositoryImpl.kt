@@ -3,15 +3,15 @@ package com.practicum.playlistmaker3.mediaLibrary.data
 import com.practicum.playlistmaker3.mediaLibrary.data.db.TracksDatabase
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackEntity
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackId
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteRepository
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class IsFavoriteRepositoryImpl(
+class FavoriteRepositoryImpl(
     private val tracksDatabase: TracksDatabase,
     private val trackDbConvertor: TrackDbConvertor
-) : IsFavoriteRepository {
+) : FavoriteRepository {
 
     override suspend fun insertTrack(track: Track) {
         tracksDatabase.trackDao().insertTrack(convertFromTrack(track))

@@ -17,14 +17,6 @@ import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork
 import com.practicum.playlistmaker3.util.simpleDateFormat
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val THOUSAND_L = 1000L
-const val TRACK = "track"
-const val STATE_DEFAULT = 0
-const val STATE_PREPARED = 1
-const val STATE_PLAYING = 2
-const val STATE_PAUSED = 3
-const val STATE_RELEASE = 4
-
 @Suppress("CAST_NEVER_SUCCEEDS")
 class MediaActivity : AppCompatActivity() {
 
@@ -73,7 +65,7 @@ class MediaActivity : AppCompatActivity() {
             .transform(RoundedCorners(applicationContext.resources.getDimensionPixelSize(R.dimen.top_8)))
             .into(cover)
 
-        viewModel.isFavoriteTrackListId(currentTrack.trackId)
+        viewModel.favoriteTrackListId(currentTrack.trackId)
 
         viewModel.isFavoriteLiveData.observe(this) { screen ->
             if (screen.isFavorite) {
@@ -123,5 +115,12 @@ class MediaActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.playerStateChange(STATE_RELEASE)
+    }
+
+    companion object {
+        private const val THOUSAND_L = 1000L
+        const val TRACK = "track"
+       private const val STATE_PLAYING = 2
+        private const val STATE_RELEASE = 4
     }
 }

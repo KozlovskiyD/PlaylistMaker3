@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
 import kotlinx.coroutines.launch
 
-class TrackIsFavoriteViewModel(private val isFavoriteInteractor: IsFavoriteInteractor) :
+class TrackIsFavoriteViewModel(private val favoriteInteractor: FavoriteInteractor) :
     ViewModel() {
 
     private var favoriteLiveDataMutable = MutableLiveData<TrackFavoriteState>()
@@ -15,7 +15,7 @@ class TrackIsFavoriteViewModel(private val isFavoriteInteractor: IsFavoriteInter
 
     fun loadFavoriteList() {
         viewModelScope.launch {
-            isFavoriteInteractor.isFavoriteTracks().collect { tracks ->
+            favoriteInteractor.favoriteTracks().collect { tracks ->
                 if (tracks.isEmpty()) renderState(TrackFavoriteState.Empty)
                 else renderState(TrackFavoriteState.Content(tracks))
             }

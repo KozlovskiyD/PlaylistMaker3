@@ -1,28 +1,24 @@
 package com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer
 
 import android.annotation.SuppressLint
+import android.app.usage.NetworkStats.Bucket.STATE_DEFAULT
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
+import com.practicum.playlistmaker3.player.data.mediaPlayer.STATE_PREPARED
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_DEFAULT
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PAUSED
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PLAYING
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PREPARED
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val STATE_CREATE_TIME = 300L
-
 @SuppressLint("StaticFieldLeak")
 class TrackViewModel(
     private val mediaIteractor: MediaIteractor,
-    private val isFavoriteInteractor: IsFavoriteInteractor
+    private val favoriteInteractor: FavoriteInteractor
 ) : ViewModel() {
 
     private var mediaLiveDataMutable = MutableLiveData<ScreenMediaModel>()
@@ -88,14 +84,14 @@ class TrackViewModel(
 
     fun onFavoriteClicked(track: Track) {
         viewModelScope.launch {
-            if (track.isFavorite) isFavoriteInteractor.insertTrack(track)
-            else isFavoriteInteractor.deleteTrack(track)
+            if (track.isFavorite) favoriteInteractor.insertTrack(track)
+            else favoriteInteractor.deleteTrack(track)
         }
     }
 
-    fun isFavoriteTrackListId(trackId: String) {
+    fun favoriteTrackListId(trackId: String) {
         viewModelScope.launch {
-            isFavoriteInteractor.isFavoriteTrackListId().collect { tracks ->
+            favoriteInteractor.favoriteTrackListId().collect { tracks ->
                 for (item in tracks) {
                     if (item.trackId == trackId) {
                         screen.isFavorite = true
@@ -105,5 +101,10 @@ class TrackViewModel(
                 }
             }
         }
+    }
+    companion object{
+        private const val STATE_CREATE_TIME = 300L
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
 }

@@ -3,8 +3,7 @@ package com.practicum.playlistmaker3.settings.data
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-const val NIGHT = "night"
-
+@Suppress("UNREACHABLE_CODE")
 class SaveThemeNight(private val sharedPrefs: SharedPreferences) {
 
     fun themeNight(checked: Boolean) {
@@ -21,11 +20,14 @@ class SaveThemeNight(private val sharedPrefs: SharedPreferences) {
     }
 
     fun setTheme() {
-        val darkTheme: Boolean = sharedPrefs.getBoolean(NIGHT, false)
-        if (darkTheme) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+        if (sharedPrefs.contains(NIGHT)) {
+            val darkTheme = sharedPrefs.getBoolean(NIGHT, false)
+            if (darkTheme) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    }
+
+    companion object {
+        private const val NIGHT = "night"
     }
 }

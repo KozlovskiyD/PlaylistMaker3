@@ -11,14 +11,14 @@ import com.practicum.playlistmaker3.databinding.FragmentSelectedTrackBinding
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.TrackFavoriteState
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.TrackIsFavoriteViewModel
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
-import com.practicum.playlistmaker3.player.ui.viewActivity.TRACK
+import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity.Companion.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.ui.viewActivity.TrackListAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class IsFavoriteTrackFragment : Fragment() {
+class FavoriteTrackFragment : Fragment() {
     companion object {
-        fun newInstance() = IsFavoriteTrackFragment()
+        fun newInstance() = FavoriteTrackFragment()
     }
 
     private val viewModel by viewModel<TrackIsFavoriteViewModel>()
@@ -43,17 +43,17 @@ class IsFavoriteTrackFragment : Fragment() {
         return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        trackListAdapter.setTracks(null)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loadFavoriteList()
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.loadFavoriteList()
     }
 
     private fun render(state: TrackFavoriteState) {
@@ -77,7 +77,6 @@ class IsFavoriteTrackFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        trackListAdapter.setTracks(null)
         _binding = null
     }
 }

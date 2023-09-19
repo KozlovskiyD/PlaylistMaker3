@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker3.mediaLibrary.domain.impl
 
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackId
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteInteractor
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.IsFavoriteRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteRepository
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
-class IsFavoriteInteractorImpl(private val isFavoriteRepository: IsFavoriteRepository): IsFavoriteInteractor {
+class FavoriteInteractorImpl(private val isFavoriteRepository: FavoriteRepository): FavoriteInteractor {
 
     override suspend fun insertTrack(track: Track) {
         isFavoriteRepository.insertTrack(track)
@@ -16,11 +16,11 @@ class IsFavoriteInteractorImpl(private val isFavoriteRepository: IsFavoriteRepos
         isFavoriteRepository.deleteTrack(track)
     }
 
-    override suspend fun isFavoriteTracks(): Flow<List<Track>> {
+    override suspend fun favoriteTracks(): Flow<List<Track>> {
         return isFavoriteRepository.isFavoriteTracks()
     }
 
-    override suspend fun isFavoriteTrackListId(): Flow<List<TrackId>> {
+    override suspend fun favoriteTrackListId(): Flow<List<TrackId>> {
         return isFavoriteRepository.isFavoriteTrackListId()
     }
 }

@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
-import com.practicum.playlistmaker3.player.ui.viewActivity.TRACK
+import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity.Companion.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
 import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
@@ -57,6 +57,7 @@ class SearchFragment : Fragment() {
 
         val clearButton = binding.clearIcon
         val inputEditText = binding.inputEditText
+        viewModel.loadHistory()
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -78,8 +79,8 @@ class SearchFragment : Fragment() {
             binding.youSearchText.isVisible =
                 hasFocus && youSearchClear && inputEditText.text.isEmpty()
             binding.clearHistory.isVisible =
-                hasFocus && youSearchClear && inputEditText.text.isEmpty()
-            binding.trackList.isVisible = hasFocus && youSearchClear && inputEditText.text.isEmpty()
+                hasFocus  && youSearchClear && inputEditText.text.isEmpty()
+            binding.trackList.isVisible = hasFocus && inputEditText.text.isEmpty()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -175,6 +176,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showHistory(listHistory: List<Track>) {
+        if (listHistory.isNotEmpty()) youSearchClear = true
         binding.progressBar.isVisible = false
         trackListAdapter.setTracks(listHistory)
         binding.trackList.adapter = trackListAdapter
@@ -187,9 +189,11 @@ class SearchFragment : Fragment() {
 
     private fun clearButtonAndListsVisibility(s: CharSequence?) {
         binding.clearIcon.isVisible = !s.isNullOrEmpty()
-        binding.youSearchText.isVisible = s.isNullOrEmpty() && youSearchClear
-        binding.clearHistory.isVisible = s.isNullOrEmpty() && youSearchClear
-        binding.trackList.isVisible = s.isNullOrEmpty() && youSearchClear
+        if (!binding.imageError.isVisible) {
+            binding.youSearchText.isVisible = s.isNullOrEmpty() && youSearchClear
+            binding.clearHistory.isVisible = s.isNullOrEmpty() && youSearchClear
+            binding.trackList.isVisible = s.isNullOrEmpty() && youSearchClear
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

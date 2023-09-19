@@ -11,9 +11,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val ERROR = "error"
-const val EMPTY = "empty"
-
 @Suppress("UNCHECKED_CAST", "UNUSED_EXPRESSION")
 class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() {
 
@@ -110,6 +107,8 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
     }
 
     companion object {
-        const val SEARCH_DELAY = 2000L
+        private const val SEARCH_DELAY = 2000L
+        private const val ERROR = "error"
+        private const val EMPTY = "empty"
     }
 }

@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.media.MediaPlayer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker3.player.data.SharedPrefs.KEY_PREVIEW
+import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs.Companion.KEY_PREVIEW
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
 
 const val STATE_PREPARED = 1
