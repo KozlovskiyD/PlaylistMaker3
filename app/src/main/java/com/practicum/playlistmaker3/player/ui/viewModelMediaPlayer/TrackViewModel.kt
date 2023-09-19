@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
-import com.practicum.playlistmaker3.player.data.mediaPlayer.STATE_PREPARED
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
 import com.practicum.playlistmaker3.search.domain.models.Track
@@ -104,6 +103,7 @@ class TrackViewModel(
     }
     companion object{
         private const val STATE_CREATE_TIME = 300L
+        private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
     }
