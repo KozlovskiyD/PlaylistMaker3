@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker3.main.ui.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -29,6 +30,12 @@ class RootActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val navigationViewBottom = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         navigationViewBottom.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.playListFragment -> navigationViewBottom.visibility = View.GONE
+                else -> navigationViewBottom.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onDestroy() {

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.mediaLibrary.data
+package com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor
 
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackEntity
 import com.practicum.playlistmaker3.search.domain.models.Track

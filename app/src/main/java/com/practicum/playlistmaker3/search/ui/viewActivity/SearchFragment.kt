@@ -79,7 +79,7 @@ class SearchFragment : Fragment() {
             binding.youSearchText.isVisible =
                 hasFocus && youSearchClear && inputEditText.text.isEmpty()
             binding.clearHistory.isVisible =
-                hasFocus  && youSearchClear && inputEditText.text.isEmpty()
+                hasFocus && youSearchClear && inputEditText.text.isEmpty()
             binding.trackList.isVisible = hasFocus && inputEditText.text.isEmpty()
         }
 
@@ -96,7 +96,6 @@ class SearchFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {}
         }
-
         simpleTextWatcher.let { inputEditText.addTextChangedListener(it) }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -210,6 +209,5 @@ class SearchFragment : Fragment() {
 
     companion object {
         const val SAVE_TEXT = "SAVE_TEXT"
-        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

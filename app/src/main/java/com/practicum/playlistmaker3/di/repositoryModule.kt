@@ -1,8 +1,12 @@
 package com.practicum.playlistmaker3.di
 
+import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.PlaylistDbConvertor
+import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.PlaylistTrackDbConvertor
+import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.TrackDbConvertor
 import com.practicum.playlistmaker3.mediaLibrary.data.FavoriteRepositoryImpl
-import com.practicum.playlistmaker3.mediaLibrary.data.TrackDbConvertor
+import com.practicum.playlistmaker3.mediaLibrary.data.PlaylistRepositoryImpl
 import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistRepository
 import com.practicum.playlistmaker3.player.data.MediaRepositoryImpl
 import com.practicum.playlistmaker3.player.domain.api.MediaRepository
 import com.practicum.playlistmaker3.search.data.TrackRepositoryImpl
@@ -35,7 +39,19 @@ val repositoryModule = module {
         TrackDbConvertor()
     }
 
+    factory {
+        PlaylistDbConvertor(get())
+    }
+
+    factory {
+        PlaylistTrackDbConvertor()
+    }
+
     single<FavoriteRepository> {
         FavoriteRepositoryImpl(get(), get())
+    }
+
+    single<PlaylistRepository> {
+        PlaylistRepositoryImpl(get(), get(), get())
     }
 }

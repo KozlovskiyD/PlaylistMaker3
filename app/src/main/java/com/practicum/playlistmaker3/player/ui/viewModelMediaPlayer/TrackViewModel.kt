@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
 import com.practicum.playlistmaker3.search.domain.models.Track
@@ -17,7 +19,8 @@ import kotlinx.coroutines.launch
 @SuppressLint("StaticFieldLeak")
 class TrackViewModel(
     private val mediaIteractor: MediaIteractor,
-    private val favoriteInteractor: FavoriteInteractor
+    private val favoriteInteractor: FavoriteInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private var mediaLiveDataMutable = MutableLiveData<ScreenMediaModel>()
@@ -25,6 +28,12 @@ class TrackViewModel(
 
     private var isFavoriteDataMutable = MutableLiveData<ScreenMediaModel>()
     var isFavoriteLiveData: LiveData<ScreenMediaModel> = isFavoriteDataMutable
+
+    private var playlistLiveDataMutable = MutableLiveData<List<Playlist>>()
+    var playlistLiveData: LiveData<List<Playlist>> = playlistLiveDataMutable
+
+    private var addTrackInPlaylistDataMutable = MutableLiveData<Boolean>()
+    var addTrackInPlaylistLiveData: LiveData<Boolean> = addTrackInPlaylistDataMutable
 
     private var playerState = STATE_DEFAULT
     private var timerJob: Job? = null
@@ -101,7 +110,27 @@ class TrackViewModel(
             }
         }
     }
-    companion object{
+
+    fun loadListPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist().collect { listPlaylist ->
+                playlistLiveDataMutable.value = listPlaylist
+            }
+        }
+    }
+
+    fun saveTrackInPlaylist(playlist: Playlist, track: Track) {
+        val isAddTrack = playlist.trackList.contains(track.trackId.toLong())
+        if (isAddTrack) addTrackInPlaylistDataMutable.value = true
+        else {
+            viewModelScope.launch {
+                playlistInteractor.insertPlaylistTrack(playlist, track)
+            }
+            addTrackInPlaylistDataMutable.value = false
+        }
+    }
+
+    companion object {
         private const val STATE_CREATE_TIME = 300L
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
