@@ -69,37 +69,36 @@
         android:id="@+id/button_add_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/top_24"
+        android:layout_marginStart="@dimen/top_8"
         android:background="@color/gray"
         android:backgroundTint="?attr/colorSecondary"
         app:layout_constraintBottom_toTopOf="@id/guideline_Top"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/artist_name_media"
         app:layout_constraintVertical_bias="0.35"
         app:srcCompat="@drawable/button_add_playlist"
         tools:ignore="ContentDescription,ImageContrastCheck" />
 
     <ImageView
-        android:id="@+id/button_heart"
+        android:id="@+id/button_Is_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginEnd="@dimen/top_24"
+        android:layout_marginEnd="@dimen/top_8"
         android:background="@color/gray"
         android:backgroundTint="?attr/colorSecondary"
         app:layout_constraintBottom_toTopOf="@id/guideline_Top"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toBottomOf="@id/artist_name_media"
         app:layout_constraintVertical_bias="0.35"
-        app:srcCompat="@drawable/button_heart"
-        tools:ignore="ContentDescription,ImageContrastCheck" />
+        app:srcCompat="@drawable/button_favorite_off"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/button_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/timer"
-        app:layout_constraintEnd_toStartOf="@id/button_heart"
+        app:layout_constraintEnd_toStartOf="@id/button_Is_favorite"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/button_add_playlist"
         app:layout_constraintTop_toBottomOf="@id/artist_name_media"

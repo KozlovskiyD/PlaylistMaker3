@@ -4,13 +4,8 @@ import android.content.SharedPreferences
 import android.media.MediaPlayer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker3.player.data.SharedPrefs.KEY_PREVIEW
+import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs.Companion.KEY_PREVIEW
 import com.practicum.playlistmaker3.search.data.dto.TrackDto
-
-const val STATE_PREPARED = 1
-const val STATE_PLAYING = 2
-const val STATE_PAUSED = 3
-const val STATE_RELEASE = 4
 
 class MediaPlayers(
     private val sharedPrefs: SharedPreferences,
@@ -43,5 +38,11 @@ class MediaPlayers(
 
     override fun timerSecond(): Long {
         return mediaPlayer.currentPosition.toLong()
+    }
+    companion object{
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val STATE_RELEASE = 4
     }
 }

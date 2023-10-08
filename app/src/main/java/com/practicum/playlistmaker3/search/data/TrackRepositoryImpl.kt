@@ -15,10 +15,10 @@ class TrackRepositoryImpl(
     private val sharedPrefClient: SharedPrefClient,
 ) : TrackRepository {
 
-    override  fun searchTrack(expression: String): Flow<Resource<List<Track>>> = flow {
+    override fun searchTrack(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.request(TrackSearchRequest(expression))
         when (response.resultCode) {
-            -1 -> emit(Resource.Error("false"))
+            -1 -> emit(Resource.Error(ERROR))
             200 -> {
                 emit(Resource.Success((response as TrackSearchResponse).results.map {
                     Track(
@@ -33,11 +33,9 @@ class TrackRepositoryImpl(
                         it.country,
                         it.previewUrl
                     )
-                }
-                )
-                )
+                }))
             }
-            else -> emit(Resource.Error("true"))
+            else -> emit(Resource.Error(EMPTY))
         }
     }
 
@@ -83,5 +81,10 @@ class TrackRepositoryImpl(
                 it.previewUrl
             )
         }
+    }
+    companion object{
+        private const val ERROR = "error"
+        private const val EMPTY = "empty"
+
     }
 }

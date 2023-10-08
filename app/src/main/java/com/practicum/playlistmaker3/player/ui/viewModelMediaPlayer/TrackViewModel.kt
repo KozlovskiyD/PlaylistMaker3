@@ -1,43 +1,47 @@
 package com.practicum.playlistmaker3.player.ui.viewModelMediaPlayer
 
 import android.annotation.SuppressLint
+import android.app.usage.NetworkStats.Bucket.STATE_DEFAULT
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_DEFAULT
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PAUSED
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PLAYING
-import com.practicum.playlistmaker3.player.ui.viewActivity.STATE_PREPARED
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
-class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
+class TrackViewModel(
+    private val mediaIteractor: MediaIteractor,
+    private val favoriteInteractor: FavoriteInteractor
+) : ViewModel() {
 
     private var mediaLiveDataMutable = MutableLiveData<ScreenMediaModel>()
     var mediaLiveData: LiveData<ScreenMediaModel> = mediaLiveDataMutable
+
+    private var isFavoriteDataMutable = MutableLiveData<ScreenMediaModel>()
+    var isFavoriteLiveData: LiveData<ScreenMediaModel> = isFavoriteDataMutable
 
     private var playerState = STATE_DEFAULT
     private var timerJob: Job? = null
     var duration = 0L
     var currentSecond = 0L
-    var screen = ScreenMediaModel(false, 0L)
+    var screen = ScreenMediaModel(false, 0L, false)
 
     fun preparePlayer(currentTrackPreviewUrl: Track) {
         playerState = STATE_PREPARED
         mediaIteractor.sendTrack(currentTrackPreviewUrl)
     }
 
-     fun startCreateTime(){
+    fun startCreateTime() {
         duration = (mediaIteractor.getCurrentTime(true))
         timerJob = viewModelScope.launch {
             while (playerState == STATE_PLAYING) {
-                delay(300L)
+                delay(STATE_CREATE_TIME)
                 currentSecond = (mediaIteractor.getCurrentTime(false))
                 screen.time = currentSecond
                 mediaLiveDataMutable.value = screen
@@ -59,13 +63,13 @@ class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
         }
     }
 
-    private fun playerStart(){
+    private fun playerStart() {
         screen.playButton = false
         mediaLiveDataMutable.value = screen
         playerState = STATE_PLAYING
     }
 
-    private fun playerPause(){
+    private fun playerPause() {
         timerJob?.cancel()
         screen.playButton = true
         mediaLiveDataMutable.value = screen
@@ -75,5 +79,32 @@ class TrackViewModel(private val mediaIteractor: MediaIteractor) : ViewModel() {
     fun playerStateChange(state: Int) {
         playerState = state
         playbackControl()
+    }
+
+    fun onFavoriteClicked(track: Track) {
+        viewModelScope.launch {
+            if (track.isFavorite) favoriteInteractor.insertTrack(track)
+            else favoriteInteractor.deleteTrack(track)
+        }
+    }
+
+    fun favoriteTrackListId(trackId: String) {
+        viewModelScope.launch {
+            favoriteInteractor.favoriteTrackListId().collect { tracks ->
+                for (item in tracks) {
+                    if (item.trackId == trackId) {
+                        screen.isFavorite = true
+                        isFavoriteDataMutable.value = screen
+                        break
+                    }
+                }
+            }
+        }
+    }
+    companion object{
+        private const val STATE_CREATE_TIME = 300L
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
 }

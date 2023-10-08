@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/top_padding">
+    android:paddingHorizontal="@dimen/top_padding"
+    android:theme="@style/Theme.PlaylistMaker">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             android:singleLine="true"
             android:textColor="@color/black_icon"
             android:textColorHint="?attr/colorPrimary"
-            android:textCursorDrawable="@null"
+            android:textCursorDrawable="@drawable/cursor_color"
             android:textFontWeight="400"
             android:textSize="@dimen/texts_16"
             tools:ignore="RtlSymmetry,TextContrastCheck" />
@@ -67,54 +67,23 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/you_search_text"
-        style="@style/searchText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/top_padding"
-        android:layout_marginTop="@dimen/top_48"
-        android:text="@string/you_search"
-        android:textFontWeight="500"
-        android:textAlignment="center"
-        android:textSize="19sp"
-        android:visibility="gone"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/trackList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/top_padding"
-        android:background="?attr/colorSecondary"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    <Button
-        style="@style/update_button"
-        android:id="@+id/clear_history"
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/top_24"
-        android:text="@string/clear_history"
-        android:visibility="gone"/>
-
-    <ProgressBar android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="148dp"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/blue_200"
-        android:visibility="gone"/>
+        android:layout_marginTop="148dp"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/image_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
         android:layout_marginTop="110dp"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/errorMessage"
@@ -123,8 +92,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/top_padding"
-        android:visibility="gone"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/update_button"
@@ -135,5 +104,46 @@
         android:layout_marginTop="@dimen/top_24"
         android:text="@string/update"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/you_search_text"
+            style="@style/searchText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/top_padding"
+            android:layout_marginTop="@dimen/top_48"
+            android:text="@string/you_search"
+            android:textAlignment="center"
+            android:textFontWeight="500"
+            android:textSize="19sp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trackList"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout_height"
+            android:layout_marginTop="@dimen/top_24"
+            android:layout_weight="1"
+            android:background="?attr/colorSecondary"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:ignore="InefficientWeight" />
+
+        <Button
+            android:id="@+id/clear_history"
+            style="@style/update_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/top_24"
+            android:text="@string/clear_history"
+            android:visibility="gone" />
+    </LinearLayout>
+
 </LinearLayout>
 

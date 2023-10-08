@@ -44,6 +44,6 @@ class SharedPreferencesHistory(
 
     companion object {
         const val SAVE_TRACKS = "saveTracks"
-        const val KEY = "key"
+        private const val KEY = "key"
     }
 }

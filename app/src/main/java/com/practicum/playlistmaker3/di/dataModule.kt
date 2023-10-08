@@ -2,7 +2,9 @@ package com.practicum.playlistmaker3.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
+import com.practicum.playlistmaker3.mediaLibrary.data.db.TracksDatabase
 import com.practicum.playlistmaker3.player.data.SharedPrefs.SharedPrefs
 import com.practicum.playlistmaker3.player.data.mediaPlayer.GetMediaPlayer
 import com.practicum.playlistmaker3.player.data.mediaPlayer.MediaPlayers
@@ -21,7 +23,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-const val HTTP_ITUNES = "http://itunes.apple.com"
+
+private const val HTTP_ITUNES = "http://itunes.apple.com"
 val dataModule = module {
 
     //search
@@ -49,6 +52,12 @@ val dataModule = module {
         RetrofitNetworkClient(get(), get())
     }
 
+    //mediaLibrary
+
+    single {
+        Room.databaseBuilder(androidContext(), TracksDatabase::class.java, "database.db").build()
+    }
+
     //player
 
     factory {
@@ -64,7 +73,7 @@ val dataModule = module {
     //setting
 
     single {
-        SaveThemeNight(get())
+        SaveThemeNight(get(),)
     }
 
     //sharing
