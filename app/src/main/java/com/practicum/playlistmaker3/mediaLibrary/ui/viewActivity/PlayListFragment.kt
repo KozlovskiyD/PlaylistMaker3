@@ -22,6 +22,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentPlaylistBinding
@@ -147,6 +149,13 @@ class PlayListFragment : Fragment() {
         }
         filePathName = namePictured()
         val file = File(filePath, filePathName)
+
+        Glide
+            .with(binding.root.context)
+            .load(uri)
+            .transform(RoundedCorners(requireContext().resources.getDimensionPixelSize(R.dimen.top_8)))
+            .into(binding.imagePlaylist)
+
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
