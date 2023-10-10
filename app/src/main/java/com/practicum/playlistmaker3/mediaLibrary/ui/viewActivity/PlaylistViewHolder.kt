@@ -6,7 +6,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.util.getTrackNumber
@@ -29,7 +28,6 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             .with(itemView)
             .load(model.filePath?.let { File(filePath, it) })
             .placeholder(R.drawable.vector_placeholder_100)
-            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.top_8)))
             .into(image)
         name.text = model.namePlaylist
         numberTrack.text =

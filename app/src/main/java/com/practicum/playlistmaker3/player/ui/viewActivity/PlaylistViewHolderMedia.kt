@@ -29,7 +29,6 @@ class PlaylistViewHolderMedia(view: View) : RecyclerView.ViewHolder(view) {
             .with(itemView)
             .load(model.filePath?.let { File(filePath, it) })
             .placeholder(R.drawable.vector_placeholder)
-            .centerCrop()
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.top_2)))
             .into(image)
         name.text = model.namePlaylist

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:ignore="ExtraText">
-    android:shape="rectangle">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <shape
+            android:shape="rectangle">
+            <stroke
+                android:width="2dp"
+                android:color="@color/gray"
+                android:dashWidth="32dp"
+                android:dashGap="@dimen/top_40" />
+            <corners android:radius="@dimen/top_8" />
+            <solid android:color="?attr/colorSecondary"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/placeholder_playlist"
+        android:height="@dimen/top_100"
+        android:width="@dimen/top_100"
+        android:gravity="center">
+    </item>
+</layer-list>
 
-    <stroke
-        android:color="@color/gray"
-        android:width="2dp"
-        android:dashWidth="32dp"
-        android:dashGap="@dimen/top_40"/>
-
-    <corners android:radius="@dimen/top_8"/>
-
-</shape>

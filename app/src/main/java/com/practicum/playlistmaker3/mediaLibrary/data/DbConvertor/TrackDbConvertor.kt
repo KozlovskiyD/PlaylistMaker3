@@ -3,7 +3,7 @@ package com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackEntity
 import com.practicum.playlistmaker3.search.domain.models.Track
 
-class TrackDbConvertor {
+object TrackDbConvertor {
 
     fun map(track: Track): TrackEntity {
         return TrackEntity(
@@ -34,5 +34,4 @@ class TrackDbConvertor {
             previewUrl = track.previewUrl
         )
     }
-
 }

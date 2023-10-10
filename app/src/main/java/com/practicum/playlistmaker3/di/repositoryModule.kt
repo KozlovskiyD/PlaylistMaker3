@@ -36,7 +36,7 @@ val repositoryModule = module {
     }
 
     factory {
-        TrackDbConvertor()
+        TrackDbConvertor
     }
 
     factory {
@@ -44,7 +44,7 @@ val repositoryModule = module {
     }
 
     factory {
-        PlaylistTrackDbConvertor()
+        PlaylistTrackDbConvertor
     }
 
     single<FavoriteRepository> {

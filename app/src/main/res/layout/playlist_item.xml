@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/top_4"
-    android:layout_marginBottom="@dimen/top_padding"
-    android:theme="@style/Theme.PlaylistMaker"
-    tools:ignore="MissingConstraints">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:layout_marginHorizontal="@dimen/top_4"
+        android:layout_marginBottom="@dimen/top_padding"
+        android:background="@null"
+        android:theme="@style/Theme.PlaylistMaker"
+        android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:background="@null"
+        app:cardCornerRadius="@dimen/top_8">
 
         <ImageView
             android:id="@+id/image_playlist_placeholder"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:scaleType="centerInside"
-            android:background="?attr/colorSecondary" />
+            android:scaleType="center"
+            android:background="?attr/colorSecondary"
+            android:contentDescription="@string/app_name" />
+    </androidx.cardview.widget.CardView>
+
+
 
         <TextView
             android:id="@+id/text_name_playlist"
             style="@style/PlaylistHintTextAppearance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_4"
             android:background="?attr/colorSecondary"
             android:ellipsize="end"
             android:maxLines="1"
@@ -43,6 +48,3 @@
             android:textColor="?attr/colorSecondaryVariant" />
 
     </LinearLayout>
-
-</androidx.cardview.widget.CardView>
-

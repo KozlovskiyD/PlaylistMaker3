@@ -134,6 +134,7 @@ class PlayListFragment : Fragment() {
             if (thereDataPlaylist()) openDialog()
             else navigateController()
         }
+
     }
 
     private fun saveImageToPrivateStorage(uri: Uri) {
