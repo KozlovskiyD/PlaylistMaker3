@@ -16,4 +16,5 @@
     <color name="grey_dark">#99A2AD</color>
     <color name="Background">#F5F5F5</color>
     <color name="blue_200">#6200EE</color>
+    <color name="overlay">#99000000</color>
 </resources>

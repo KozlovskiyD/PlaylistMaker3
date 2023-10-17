@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker3.search.domain.impl.api.TrackIteractor
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.search.ui.viewActivity.SearchFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
         if (isClickAllowed) {
             isClickAllowed = false
             viewModelScope.launch {
-                delay(SearchFragment.CLICK_DEBOUNCE_DELAY)
+                delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
         }
@@ -107,6 +106,7 @@ class SearchViewModel(private val trackIteractor: TrackIteractor) : ViewModel() 
     }
 
     companion object {
+        const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DELAY = 2000L
         private const val ERROR = "error"
         private const val EMPTY = "empty"

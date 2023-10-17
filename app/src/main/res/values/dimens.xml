@@ -2,13 +2,17 @@
 <resources>
 
     <dimen name="text_2">2sp</dimen>
+    <dimen name="text_12">12sp</dimen>
     <dimen name="text_13">13sp</dimen>
+    <dimen name="text_14">14sp</dimen>
     <dimen name="texts_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
     <dimen name="text_19">19sp</dimen>
     <dimen name="text_button">22sp</dimen>
-    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_24">24sp</dimen>
 
     <dimen name="layout_height">0dp</dimen>
+    <dimen name="top_1">1dp</dimen>
     <dimen name="top_2">2dp</dimen>
     <dimen name="top_4">4dp</dimen>
     <dimen name="top_8">8dp</dimen>
@@ -23,6 +27,7 @@
     <dimen name="icon_30">30dp</dimen>
     <dimen name="top_34">34dp</dimen>
     <dimen name="top_40">40dp</dimen>
+    <dimen name="top_42">42dp</dimen>
     <dimen name="icon_45">45dp</dimen>
     <dimen name="top_48">48dp</dimen>
     <dimen name="top_56">56dp</dimen>

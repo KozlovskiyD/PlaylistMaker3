@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentMediaLibraryBinding
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.adapter.MediaViewPagerAdapter
 
 class MediaLibraryFragment : Fragment() {
 
@@ -33,8 +34,8 @@ class MediaLibraryFragment : Fragment() {
         _tabLayoutMediator =
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 when (position) {
-                    0 -> tab.text = getString(R.string.selectedTrack)
-                    1 -> tab.text = getString(R.string.playlists)
+                    0 -> tab.text = requireContext().resources.getString(R.string.selectedTrack)
+                    1 -> tab.text = requireContext().resources.getString(R.string.playlists)
                 }
             }
         tabLayoutMediator.attach()

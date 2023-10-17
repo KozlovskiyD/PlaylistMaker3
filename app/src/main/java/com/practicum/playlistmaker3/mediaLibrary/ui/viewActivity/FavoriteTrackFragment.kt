@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.practicum.playlistmaker3.databinding.FragmentSelectedTrackBinding
-import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.TrackFavoriteState
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.TrackIsFavoriteViewModel
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.states.TrackFavoriteState
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity.Companion.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
@@ -26,9 +26,9 @@ class FavoriteTrackFragment : Fragment() {
     private var _binding: FragmentSelectedTrackBinding? = null
     private val binding get() = _binding!!
 
-    private val trackListAdapter = TrackListAdapter {
+    private val trackListAdapter = TrackListAdapter {track, _ ->
         Intent(requireContext(), MediaActivity::class.java).apply {
-            putExtra(TRACK, it)
+            putExtra(TRACK, track)
             startActivity(this)
         }
     }
@@ -47,6 +47,7 @@ class FavoriteTrackFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loadFavoriteList()
         viewModel.observeState().observe(viewLifecycleOwner) {
+            trackListAdapter.setTracks(null, false)
             render(it)
         }
     }
@@ -69,9 +70,10 @@ class FavoriteTrackFragment : Fragment() {
     }
 
     private fun showContent(tracks: List<Track>) {
+        trackListAdapter.setTracks(null, false)
         binding.imageError.isVisible = false
         binding.messageEmpty.isVisible = false
-        trackListAdapter.setTracks(tracks)
+        trackListAdapter.setTracks(tracks, false)
         binding.favoriteList.adapter = trackListAdapter
     }
 

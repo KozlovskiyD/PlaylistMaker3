@@ -17,6 +17,12 @@
         android:name="com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.MediaLibraryFragment"
         android:label="fragment_media_library"
         tools:layout="@layout/fragment_media_library">
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playListFragment"
+            app:destination="@id/playListFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_currentPlaylistFragment"
+            app:destination="@id/currentPlaylistFragment" />
     </fragment>
 
     <fragment
@@ -25,4 +31,27 @@
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings">
     </fragment>
+
+    <fragment
+        android:id="@+id/playListFragment"
+        android:name="com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.PlayListFragment"
+        android:label="PlayListFragment"
+        tools:layout="@layout/fragment_playlist"/>
+
+    <fragment
+        android:id="@+id/currentPlaylistFragment"
+        android:name="com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.CurrentPlaylistFragment"
+        android:label="CurrentPlaylistFragment"
+        tools:layout="@layout/fragment_current_playlist">
+
+        <action
+            android:id="@+id/action_currentPlaylistFragment_to_editablePlaylistFragment"
+            app:destination="@id/editablePlaylistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editablePlaylistFragment"
+        android:name="com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.EditablePlaylistFragment"
+        android:label="EditablePlaylistFragment"
+        tools:layout="@layout/fragment_playlist"/>
 </navigation>
