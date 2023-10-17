@@ -24,13 +24,13 @@ class SearchFragment : Fragment() {
 
     private val viewModel by viewModel<SearchViewModel>()
 
-    private val trackListAdapter = TrackListAdapter {
-        viewModel.saveHistory(it)
+    private val trackListAdapter = TrackListAdapter { track, _ ->
+        viewModel.saveHistory(track)
         viewModel.clickDebounce()
         youSearchClear = true
         if (isClickAllowed) {
             Intent(requireContext(), MediaActivity::class.java).apply {
-                putExtra(TRACK, it)
+                putExtra(TRACK, track)
                 startActivity(this)
             }
         }
@@ -61,12 +61,12 @@ class SearchFragment : Fragment() {
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
-            trackListAdapter.setTracks(null)
+            trackListAdapter.setTracks(null, false)
             context?.hideTheKeyboard(clearButton)
         }
 
         binding.clearHistory.setOnClickListener {
-            trackListAdapter.setTracks(null)
+            trackListAdapter.setTracks(null, false)
             youSearchClear = false
             binding.youSearchText.isVisible = false
             binding.clearHistory.isVisible = false
@@ -116,7 +116,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showMessage() {
-        trackListAdapter.setTracks(null)
+        trackListAdapter.setTracks(null, false)
         binding.imageError.isVisible = true
         binding.errorMessage.isVisible = true
         binding.trackList.isVisible = false
@@ -142,7 +142,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showContent(tracks: List<Track>) {
-        trackListAdapter.setTracks(tracks)
+        trackListAdapter.setTracks(tracks, false)
         binding.trackList.adapter = trackListAdapter
         binding.trackList.isVisible = true
         binding.imageError.isVisible = false
@@ -177,7 +177,7 @@ class SearchFragment : Fragment() {
     private fun showHistory(listHistory: List<Track>) {
         if (listHistory.isNotEmpty()) youSearchClear = true
         binding.progressBar.isVisible = false
-        trackListAdapter.setTracks(listHistory)
+        trackListAdapter.setTracks(listHistory, false)
         binding.trackList.adapter = trackListAdapter
     }
 

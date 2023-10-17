@@ -11,20 +11,27 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
-import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.ListPlaylistState
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.adapter.PlaylistAdapter
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.NewPlaylistFragmentViewModel
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.states.ListPlaylistState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : Fragment() {
 
     companion object {
+        const val BUNGLE_KEY = "bungle_key"
         fun newInstance() = NewPlaylistFragment()
-    }
+        }
 
     private val viewModel by viewModel<NewPlaylistFragmentViewModel>()
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
+    private val playlistAdapter = PlaylistAdapter {
+        val bundle = Bundle()
+        bundle.putSerializable(BUNGLE_KEY, it)
+        findNavController().navigate(R.id.action_mediaLibraryFragment_to_currentPlaylistFragment, bundle)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +52,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
+            playlistAdapter.setPlaylistItem(null)
             render(it)
         }
     }
@@ -67,7 +75,8 @@ class NewPlaylistFragment : Fragment() {
         binding.imageError.isVisible = false
         binding.messageEmpty.isVisible = false
         binding.recyclerViewPlaylist.layoutManager = GridLayoutManager(context, 2)
-        binding.recyclerViewPlaylist.adapter = PlaylistAdapter(playlist)
+        playlistAdapter.setPlaylistItem(playlist)
+        binding.recyclerViewPlaylist.adapter = playlistAdapter
     }
 
     override fun onDestroyView() {

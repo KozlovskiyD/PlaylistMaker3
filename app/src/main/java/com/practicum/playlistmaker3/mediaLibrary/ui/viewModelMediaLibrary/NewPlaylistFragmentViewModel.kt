@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.PlaylistInteractor
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.states.ListPlaylistState
 import kotlinx.coroutines.launch
 
 class NewPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor) :
@@ -12,6 +13,9 @@ class NewPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInter
 
     private var playlistLiveDataMutable = MutableLiveData<ListPlaylistState>()
     fun observeState(): LiveData<ListPlaylistState> = playlistLiveDataMutable
+
+    private var listLiveDataMutable = MutableLiveData<String>()
+    fun observeStateList(): LiveData<String> = listLiveDataMutable
 
     fun loadListPlaylist() {
         viewModelScope.launch {

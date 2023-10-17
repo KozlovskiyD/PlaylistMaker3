@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.states.TrackFavoriteState
 import kotlinx.coroutines.launch
 
 class TrackIsFavoriteViewModel(private val favoriteInteractor: FavoriteInteractor) :
