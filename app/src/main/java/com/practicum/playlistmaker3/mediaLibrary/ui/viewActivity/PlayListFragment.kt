@@ -36,9 +36,9 @@ import kotlin.random.Random
 
 
 @Suppress("DEPRECATION")
-class PlayListFragment : Fragment() {
+open class PlayListFragment : Fragment() {
 
-    private val viewModel by viewModel<PlaylistFragmentViewModel>()
+    protected open val viewModel by viewModel<PlaylistFragmentViewModel>()
 
     companion object {
         fun newInstance() = PlayListFragment()
@@ -47,7 +47,7 @@ class PlayListFragment : Fragment() {
     }
 
     private var _binding: FragmentPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
 
     private var namePlaylist = ""

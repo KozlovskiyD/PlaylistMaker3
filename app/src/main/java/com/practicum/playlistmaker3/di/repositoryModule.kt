@@ -5,8 +5,8 @@ import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.PlaylistTrackD
 import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.TrackDbConvertor
 import com.practicum.playlistmaker3.mediaLibrary.data.FavoriteRepositoryImpl
 import com.practicum.playlistmaker3.mediaLibrary.data.PlaylistRepositoryImpl
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteRepository
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.FavoriteRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.PlaylistRepository
 import com.practicum.playlistmaker3.player.data.MediaRepositoryImpl
 import com.practicum.playlistmaker3.player.domain.api.MediaRepository
 import com.practicum.playlistmaker3.search.data.TrackRepositoryImpl
