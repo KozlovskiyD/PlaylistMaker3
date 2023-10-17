@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.states
+package com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary
 
 import com.practicum.playlistmaker3.search.domain.models.Track
 

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.adapter
+package com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity
 
 import android.os.Environment
 import android.view.View
@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
-import com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity.PlayListFragment
 import com.practicum.playlistmaker3.util.getTrackNumber
 import java.io.File
 

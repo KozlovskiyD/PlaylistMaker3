@@ -1,15 +1,11 @@
-package com.practicum.playlistmaker3.mediaLibrary.domain.api
+package com.practicum.playlistmaker3.mediaLibrary.domain.db
 
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
-interface PlaylistRepository {
+interface PlaylistInteractor {
     suspend fun insertPlaylist(playlist: Playlist)
     suspend fun getPlaylist(): Flow<List<Playlist>>
     suspend fun insertPlaylistTrack(playlist: Playlist, track: Track)
-    suspend fun getListTrack(trackList: List<Long>): Flow<List<Track>>
-    suspend fun deleteTrackPlaylist(track: Track, playlistId: Int): List<Long>
-    suspend fun deletePlaylist(playlist: Playlist)
-    suspend fun editPlaylist(playlist: Playlist)
 }
