@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker3.mediaLibrary.data
 
-import android.annotation.SuppressLint
 import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.PlaylistDbConvertor
 import com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor.PlaylistTrackDbConvertor
 import com.practicum.playlistmaker3.mediaLibrary.data.db.AppDatabase
@@ -20,7 +19,6 @@ class PlaylistRepositoryImpl(
     override suspend fun insertPlaylist(playlist: Playlist) {
         appDatabase.playlistDao().insertPlaylist(playlistDbConvertor.map(playlist))
     }
-
 
     override suspend fun getPlaylist(): Flow<List<Playlist>> = flow {
         val playlistEntityList = appDatabase.playlistDao().getPlaylist()
@@ -46,11 +44,17 @@ class PlaylistRepositoryImpl(
         return changeablePlaylist.trackList
     }
 
-    @SuppressLint("SuspiciousIndentation")
-    override suspend fun deletePlaylist(playlist: Playlist){
-      val trackListId = playlist.trackList
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        val trackListId = playlist.trackList
         appDatabase.playlistDao().deletePlaylist(playlistDbConvertor.map(playlist))
-       deleteTracks(trackListId)
+
+        val trackListString = trackListId.map { trackId -> trackId.toString() }
+        trackListString.indices.forEach { trackId ->
+            val trackEntity =
+                appDatabase.playlistTrackDao().getCurrentListTrack(trackListString[trackId])
+            val track = playlistTrackDbConvertor.map(trackEntity)
+            updatePlaylistTrackTable(track)
+        }
     }
 
     override suspend fun editPlaylist(playlist: Playlist) {
@@ -61,23 +65,19 @@ class PlaylistRepositoryImpl(
         appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlist))
     }
 
-    private suspend fun deleteTracks(trackListId: List<Long>){
-        trackListId.forEach { trackId ->
-            val trackEntity = appDatabase.playlistTrackDao().getCurrentListTrack(trackId.toString())
-            val track = playlistTrackDbConvertor.map(trackEntity!!)
-            updatePlaylistTrackTable(track)
-        }
-    }
-
     private suspend fun newListTrack(trackList: List<Long>): List<Track> {
         val trackListString = trackList.map { trackId -> trackId.toString() }
         val newTrackEntityList = mutableListOf<PlaylistTrackEntity>()
-        trackListString.forEach { trackId ->
+        trackListString.indices.forEach { trackId ->
             newTrackEntityList.run {
-                add(appDatabase.playlistTrackDao().getCurrentListTrack(trackId)!!)
+                add(appDatabase.playlistTrackDao().getCurrentListTrack(trackListString[trackId]))
             }
         }
-        return newTrackEntityList.map { playlistTrackEntity -> playlistTrackDbConvertor.map(playlistTrackEntity) }
+        return newTrackEntityList.map { playlistTrackEntity ->
+            playlistTrackDbConvertor.map(
+                playlistTrackEntity
+            )
+        }
     }
 
     private suspend fun addTrackPlaylist(playlistId: Int, trackId: String) {
@@ -88,17 +88,16 @@ class PlaylistRepositoryImpl(
         updatePlaylist(changeablePlaylist)
     }
 
-    private suspend fun updatePlaylistTrackTable(track: Track){
+    private suspend fun updatePlaylistTrackTable(track: Track) {
         var isTrack = true
         val playlistEntityList = appDatabase.playlistDao().getPlaylist()
-        val playlistList = playlistEntityList.map { playlistEntity -> playlistDbConvertor.map(playlistEntity) }
-        for (item in playlistList){
-            if (item.trackList.contains(track.trackId.toLong())){
+        val playlistList =
+            playlistEntityList.map { playlistEntity -> playlistDbConvertor.map(playlistEntity) }
+        for (item in playlistList) {
+            if (item.trackList.contains(track.trackId.toLong())) {
                 isTrack = false
             }
         }
-        if (isTrack) {
-            appDatabase.playlistTrackDao().deleteTrack(playlistTrackDbConvertor.map(track))
-        }
+        if (isTrack) appDatabase.playlistTrackDao().deleteTrack(playlistTrackDbConvertor.map(track))
     }
 }

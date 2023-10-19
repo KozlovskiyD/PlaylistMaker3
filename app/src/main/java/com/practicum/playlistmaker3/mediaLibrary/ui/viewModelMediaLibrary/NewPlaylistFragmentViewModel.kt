@@ -14,6 +14,9 @@ class NewPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInter
     private var playlistLiveDataMutable = MutableLiveData<ListPlaylistState>()
     fun observeState(): LiveData<ListPlaylistState> = playlistLiveDataMutable
 
+    private var listLiveDataMutable = MutableLiveData<String>()
+    fun observeStateList(): LiveData<String> = listLiveDataMutable
+
     fun loadListPlaylist() {
         viewModelScope.launch {
             playlistInteractor.getPlaylist().collect { ListPlaylist ->

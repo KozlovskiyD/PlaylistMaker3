@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker3.search.ui.viewActivity
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker3.search.domain.models.Track
@@ -18,8 +19,10 @@ class TrackListAdapter(private var onTrackClick: (Track, Boolean) -> Unit) :
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener { onTrackClick.invoke(tracks[position], false) }
         if (isCurrentListTrack) {
+            Log.e("AAA", "adapter")
             holder.itemView.setOnLongClickListener {
                   onTrackClick.invoke(tracks[position], true)
+                Log.e("AAA", "CLICK")
                 return@setOnLongClickListener true
             }
         }

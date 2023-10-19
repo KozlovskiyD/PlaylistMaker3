@@ -12,19 +12,13 @@ class EditablePlaylistFragmentViewModel(private val playlistInteractor: Playlist
     private var editPlaylistLiveDataMutable = MutableLiveData<Playlist>()
     fun observeState(): LiveData<Playlist> = editPlaylistLiveDataMutable
 
-    private var exitPlaylistLiveDataMutable = MutableLiveData<Boolean>()
-    fun exitObserveState(): LiveData<Boolean> = exitPlaylistLiveDataMutable
-
     fun loadPlaylist(playlist: Playlist){
         editPlaylistLiveDataMutable.postValue(playlist)
     }
 
     fun editPlaylist(playlist: Playlist){
-        val job = viewModelScope.launch {
+        viewModelScope.launch {
             playlistInteractor.editPlaylist(playlist)
         }
-        job.onJoin
-        exitPlaylistLiveDataMutable.postValue(true)
-
     }
 }

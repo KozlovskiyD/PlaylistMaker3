@@ -172,10 +172,6 @@ class CurrentPlaylistFragment : Fragment() {
 
         buttonMenuLocation()
 
-        viewModel.observeStateExit().observe(viewLifecycleOwner) {
-            backScreen()
-        }
-
         binding.back.setOnClickListener {
             backScreen()
         }
@@ -211,6 +207,7 @@ class CurrentPlaylistFragment : Fragment() {
             .setNegativeButton("Нет") { _, _ -> }
             .setPositiveButton("Да") { _, _ ->
                 viewModel.deletePlaylist(playlist)
+                backScreen()
             }
             .show()
     }

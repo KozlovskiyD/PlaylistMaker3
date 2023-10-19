@@ -13,5 +13,5 @@ interface PlaylistTrackDao {
     suspend fun deleteTrack(track: PlaylistTrackEntity)
 
     @Query("SELECT * FROM playlist_track_table WHERE trackId = :id")
-    suspend fun getCurrentListTrack(id: String): PlaylistTrackEntity?
+    suspend fun getCurrentListTrack(id: String): PlaylistTrackEntity
 }
