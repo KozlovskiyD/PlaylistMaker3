@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.api.PlaylistInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistInteractor
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import kotlinx.coroutines.delay
