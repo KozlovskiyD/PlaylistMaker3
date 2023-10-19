@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.search.domain.models.Track
+import com.practicum.playlistmaker3.search.domain.models.getCoverArtwork60
 import com.practicum.playlistmaker3.util.simpleDateFormat
 
 
@@ -24,7 +25,7 @@ class TrackListViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     fun bind(model: Track) {
         Glide
             .with(itemView)
-            .load(model.artworkUrl100)
+            .load(getCoverArtwork60(model.artworkUrl100))
             .placeholder(R.drawable.vector_placeholder)
             .centerCrop()
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.top_2)))

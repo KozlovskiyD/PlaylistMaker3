@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class CurrentPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor) :
     ViewModel() {
 
-    var playlistJob: Job? = null
+    private var playlistJob: Job? = null
 
     private var trackListLiveDataMutable = MutableLiveData<List<Track>>()
     fun observeState(): LiveData<List<Track>> = trackListLiveDataMutable
@@ -30,6 +30,9 @@ class CurrentPlaylistFragmentViewModel(private val playlistInteractor: PlaylistI
 
     private var messageTrackLiveDataMutable = MutableLiveData<String>()
     fun observeStateMessage(): LiveData<String> = messageTrackLiveDataMutable
+
+    private var exitDataMutable = MutableLiveData<Boolean>()
+    fun observeStateExit(): LiveData<Boolean> = exitDataMutable
 
     fun loadListTrack(trackList: List<Long>) {
         viewModelScope.launch {
@@ -59,12 +62,14 @@ class CurrentPlaylistFragmentViewModel(private val playlistInteractor: PlaylistI
         numberTrackLiveDataMutable.postValue(total)
     }
 
-    fun deletePlaylist(playlist: Playlist) {
-        playlistJob?.cancel()
+     fun deletePlaylist(playlist: Playlist) {
+         playlistJob?.cancel()
         viewModelScope.launch {
             playlistInteractor.deletePlaylist(playlist)
         }
+         exitDataMutable.postValue(true)
     }
+
 
     fun showMessage(playlist: Playlist, tracks: List<Track>) {
         var message = ""

@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker3.mediaLibrary.data.DbConvertor
 
-import android.util.Log
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.PlaylistTrackEntity
 import com.practicum.playlistmaker3.search.domain.models.Track
 
@@ -20,10 +19,9 @@ object PlaylistTrackDbConvertor {
         )
     }
 
-    fun map(track: PlaylistTrackEntity): Track {
-        Log.e("AAA", "test4")
+    fun map(track: PlaylistTrackEntity?): Track {
         return Track(
-            trackId = track.trackId,
+            trackId = track!!.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis,
