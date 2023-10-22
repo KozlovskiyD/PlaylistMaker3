@@ -29,7 +29,7 @@ import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.PlaylistFragmentViewModel
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
-import com.practicum.playlistmaker3.search.hideTheKeyboard
+import com.practicum.playlistmaker3.util.hideTheKeyboard
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream

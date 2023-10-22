@@ -15,9 +15,9 @@ import com.practicum.playlistmaker3.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity.Companion.TRACK
 import com.practicum.playlistmaker3.search.domain.models.Track
-import com.practicum.playlistmaker3.search.hideTheKeyboard
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.SearchViewModel
 import com.practicum.playlistmaker3.search.ui.viewModelSearch.TracksSearchState
+import com.practicum.playlistmaker3.util.hideTheKeyboard
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {

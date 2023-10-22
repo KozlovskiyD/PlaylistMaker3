@@ -45,16 +45,7 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
-        val trackListId = playlist.trackList
         appDatabase.playlistDao().deletePlaylist(playlistDbConvertor.map(playlist))
-
-        val trackListString = trackListId.map { trackId -> trackId.toString() }
-        trackListString.indices.forEach { trackId ->
-            val trackEntity =
-                appDatabase.playlistTrackDao().getCurrentListTrack(trackListString[trackId])
-            val track = playlistTrackDbConvertor.map(trackEntity)
-            updatePlaylistTrackTable(track)
-        }
     }
 
     override suspend fun editPlaylist(playlist: Playlist) {
@@ -63,6 +54,20 @@ class PlaylistRepositoryImpl(
 
     private suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlist))
+    }
+
+     override suspend fun deleteTracksPlaylist(playlist: Playlist){
+        val trackListId = playlist.trackList
+        val changeablePlaylist =
+            playlistDbConvertor.map(appDatabase.playlistDao().getCurrentPlaylist(playlist.id!!))
+        changeablePlaylist.trackList.clear()
+        changeablePlaylist.trackCount = 0
+        updatePlaylist(changeablePlaylist)
+        trackListId.forEach { trackId ->
+            val trackEntity = appDatabase.playlistTrackDao().getCurrentListTrack(trackId.toString())
+            val track = playlistTrackDbConvertor.map(trackEntity)
+            updatePlaylistTrackTable(track)
+        }
     }
 
     private suspend fun newListTrack(trackList: List<Long>): List<Track> {
@@ -89,6 +94,7 @@ class PlaylistRepositoryImpl(
     }
 
     private suspend fun updatePlaylistTrackTable(track: Track) {
+
         var isTrack = true
         val playlistEntityList = appDatabase.playlistDao().getPlaylist()
         val playlistList =

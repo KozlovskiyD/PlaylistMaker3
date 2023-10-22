@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.EditablePlaylistFragmentViewModel
+import com.practicum.playlistmaker3.util.hideTheKeyboard
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -78,12 +79,16 @@ class EditablePlaylistFragment : PlayListFragment() {
             }
         }
 
+        viewModel.exitObserveState().observe(viewLifecycleOwner) {
+            backScreen()
+        }
+
         binding.toCreatePlaylistButton.setOnClickListener {
+            context?.hideTheKeyboard(binding.toCreatePlaylistButton)
             playlist.namePlaylist = binding.editNamePlaylist.text.toString()
             playlist.description = binding.textDescriptionPlaylist.text.toString()
             if (isCurrentImage) playlist.filePath = filePathName
             viewModel.editPlaylist(playlist)
-            backScreen()
         }
 
         binding.back.setOnClickListener {

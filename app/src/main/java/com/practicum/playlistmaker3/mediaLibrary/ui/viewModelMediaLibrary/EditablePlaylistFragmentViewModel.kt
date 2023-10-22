@@ -12,6 +12,9 @@ class EditablePlaylistFragmentViewModel(private val playlistInteractor: Playlist
     private var editPlaylistLiveDataMutable = MutableLiveData<Playlist>()
     fun observeState(): LiveData<Playlist> = editPlaylistLiveDataMutable
 
+    private var exitPlaylistLiveDataMutable = MutableLiveData<Boolean>()
+    fun exitObserveState(): LiveData<Boolean> = exitPlaylistLiveDataMutable
+
     fun loadPlaylist(playlist: Playlist){
         editPlaylistLiveDataMutable.postValue(playlist)
     }
@@ -20,5 +23,6 @@ class EditablePlaylistFragmentViewModel(private val playlistInteractor: Playlist
         viewModelScope.launch {
             playlistInteractor.editPlaylist(playlist)
         }
+        exitPlaylistLiveDataMutable.postValue(true)
     }
 }
