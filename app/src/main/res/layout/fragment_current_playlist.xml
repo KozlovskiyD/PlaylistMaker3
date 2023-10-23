@@ -13,6 +13,19 @@
         android:background="@color/gray_light">
 
         <ImageView
+            android:id="@+id/image_current_playlist"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/frame_placeholder_big"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/text_track_name_current_playlist"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,21 +33,10 @@
             android:layout_marginTop="@dimen/top_padding"
             android:contentDescription="@string/app_name"
             android:src="@drawable/vector_the_arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/image_current_playlist"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="fitXY"
-           android:background="@drawable/frame_placeholder_big"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:tint="@color/black_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/text_track_name_current_playlist"
-            tools:ignore="ContentDescription" />
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/text_track_name_current_playlist"
@@ -76,7 +78,8 @@
             android:layout_marginTop="@dimen/top_8"
             android:background="@drawable/ellipse_2"
             app:layout_constraintStart_toEndOf="@id/text_track_time_current_playlist"
-            app:layout_constraintTop_toBottomOf="@id/text_track_description_current_playlist"/>
+            app:layout_constraintTop_toBottomOf="@id/text_track_description_current_playlist"
+            android:contentDescription="@string/app_name"/>
 
         <TextView
             android:id="@+id/text_track_number_current_playlist"
@@ -123,7 +126,6 @@
         android:background="@drawable/bottom_sheet_dg_list"
         android:orientation="vertical"
         app:behavior_hideable="false"
-
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <TextView
@@ -143,6 +145,7 @@
             android:layout_weight="1"
             android:layout_marginStart="@dimen/top_14"
             android:layout_marginTop="@dimen/top_24"
+            android:layout_marginEnd="@dimen/top_padding"
             android:background="?attr/colorSecondary"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
@@ -173,7 +176,8 @@
             android:scaleType="fitXY"
             android:layout_marginStart="@dimen/top_14"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/app_name"/>
 
         <TextView
             android:id="@+id/text_bottom_sheet_edit_playlist"

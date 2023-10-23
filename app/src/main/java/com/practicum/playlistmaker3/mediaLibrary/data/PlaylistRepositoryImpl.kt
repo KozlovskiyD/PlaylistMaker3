@@ -52,6 +52,12 @@ class PlaylistRepositoryImpl(
         updatePlaylist(playlist)
     }
 
+    override suspend fun getListTrackShare(playlist: Playlist) = flow {
+        val changeablePlaylist =
+            playlistDbConvertor.map(appDatabase.playlistDao().getCurrentPlaylist(playlist.id!!))
+        emit(newListTrack(changeablePlaylist.trackList))
+    }
+
     private suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlist))
     }

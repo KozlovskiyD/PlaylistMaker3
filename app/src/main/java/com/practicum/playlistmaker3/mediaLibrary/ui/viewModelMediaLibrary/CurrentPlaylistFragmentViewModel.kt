@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class CurrentPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor) :
     ViewModel() {
 
-     var playlistJob: Job? = null
+    var playlistJob: Job? = null
 
     private var trackListLiveDataMutable = MutableLiveData<List<Track>>()
     fun observeState(): LiveData<List<Track>> = trackListLiveDataMutable
@@ -70,26 +70,35 @@ class CurrentPlaylistFragmentViewModel(private val playlistInteractor: PlaylistI
         exitDataMutable.postValue(true)
     }
 
-    fun deletePlaylist(playlist: Playlist){
+    fun deletePlaylist(playlist: Playlist) {
         viewModelScope.launch {
             playlistInteractor.deletePlaylist(playlist)
         }
         exitDataMutable.postValue(false)
     }
 
-    fun showMessage(playlist: Playlist, tracks: List<Track>) {
-        var message: String
-        var timeTrack: String
-        var number = 1
-        val numberTrack =
-            String.format("%02d %s", playlist.trackCount, getTrackNumber(playlist.trackCount))
-        var totalMessage = "${playlist.namePlaylist}\n${playlist.description}\n${numberTrack}\n"
-        for (item in tracks) {
-            timeTrack = simpleDateFormat(item.trackTimeMillis)
-            message = "${number}. ${item.artistName} - ${item.trackName} (${timeTrack})\n"
-            totalMessage += message
-            number++
+    fun showMessage(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.getListTrackShare(playlist).collect { listTrackShare ->
+                if (listTrackShare.isNotEmpty()) {
+                    var message: String
+                    var timeTrack: String
+                    var number = 1
+                    val numberTrack = String.format(
+                        "%02d %s", listTrackShare.size, getTrackNumber(listTrackShare.size)
+                    )
+                    var totalMessage =
+                        "${playlist.namePlaylist}\n${playlist.description}\n${numberTrack}\n"
+                    for (item in listTrackShare) {
+                        timeTrack = simpleDateFormat(item.trackTimeMillis)
+                        message =
+                            "${number}. ${item.artistName} - ${item.trackName} (${timeTrack})\n"
+                        totalMessage += message
+                        number++
+                    }
+                    messageTrackLiveDataMutable.postValue(totalMessage)
+                } else messageTrackLiveDataMutable.postValue("no")
+            }
         }
-        messageTrackLiveDataMutable.postValue(totalMessage)
     }
 }

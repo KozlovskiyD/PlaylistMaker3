@@ -140,17 +140,16 @@ class CurrentPlaylistFragment : Fragment() {
         }
 
         viewModel.observeStateMessage().observe(viewLifecycleOwner) { message ->
-            shareToApp(message)
+            if (message == "no") showToast()
+            else shareToApp(message)
         }
 
         binding.buttonToShareCurrentPlaylist.setOnClickListener {
-            if (playlist.trackCount == 0) showToast()
-             else   viewModel.showMessage(playlist, tracks)
+            viewModel.showMessage(playlist)
         }
 
         binding.textToShareCurrentPlaylist.setOnClickListener {
-            if (playlist.trackCount == 0) showToast()
-                else viewModel.showMessage(playlist, tracks)
+            viewModel.showMessage(playlist)
         }
 
         binding.textEditInfoCurrentPlaylist.setOnClickListener {
@@ -184,7 +183,7 @@ class CurrentPlaylistFragment : Fragment() {
             val buttonLocation = IntArray(2)
             binding.buttonMenuCurrentPlaylist.getLocationOnScreen(buttonLocation)
             val buttonMenuHeightFromBottom =
-                binding.root.height - buttonLocation[1] - resources.getDimensionPixelSize(R.dimen.top_8)
+                binding.root.height - buttonLocation[1] - resources.getDimensionPixelSize(R.dimen.top_24)
             val bottomSheetBehavior =
                 BottomSheetBehavior.from(binding.bottomSheetTrackPlaylist)
             bottomSheetBehavior.peekHeight = buttonMenuHeightFromBottom
