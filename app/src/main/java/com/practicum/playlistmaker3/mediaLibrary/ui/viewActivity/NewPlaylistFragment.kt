@@ -19,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class NewPlaylistFragment : Fragment() {
 
     companion object {
-        const val BUNGLE_KEY = "bungle_key"
+        const val BUNDLE_KEY = "bundle_key"
         fun newInstance() = NewPlaylistFragment()
         }
 
@@ -29,7 +29,7 @@ class NewPlaylistFragment : Fragment() {
 
     private val playlistAdapter = PlaylistAdapter {
         val bundle = Bundle()
-        bundle.putSerializable(BUNGLE_KEY, it)
+        bundle.putSerializable(BUNDLE_KEY, it)
         findNavController().navigate(R.id.action_mediaLibraryFragment_to_currentPlaylistFragment, bundle)
     }
     override fun onCreateView(

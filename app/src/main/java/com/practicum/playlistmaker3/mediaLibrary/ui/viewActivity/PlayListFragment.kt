@@ -42,7 +42,6 @@ open class PlayListFragment : Fragment() {
     protected open val viewModel by viewModel<PlaylistFragmentViewModel>()
 
     companion object {
-        fun newInstance() = PlayListFragment()
         const val PICTURES_DIR = "myPlaylistPictures"
         const val COVER_JPG = "_cover.jpg"
     }
@@ -143,9 +142,8 @@ open class PlayListFragment : Fragment() {
 
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
-            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            PICTURES_DIR
-        )
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), PICTURES_DIR)
+
         if (!filePath.exists()) {
             filePath.mkdir()
         }

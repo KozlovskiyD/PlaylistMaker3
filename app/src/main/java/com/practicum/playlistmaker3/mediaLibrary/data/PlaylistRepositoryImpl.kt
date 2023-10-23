@@ -95,15 +95,15 @@ class PlaylistRepositoryImpl(
 
     private suspend fun updatePlaylistTrackTable(track: Track) {
 
-        var isTrack = true
+        var isDeleteTrack = true
         val playlistEntityList = appDatabase.playlistDao().getPlaylist()
         val playlistList =
             playlistEntityList.map { playlistEntity -> playlistDbConvertor.map(playlistEntity) }
         for (item in playlistList) {
             if (item.trackList.contains(track.trackId.toLong())) {
-                isTrack = false
+                isDeleteTrack = false
             }
         }
-        if (isTrack) appDatabase.playlistTrackDao().deleteTrack(playlistTrackDbConvertor.map(track))
+        if (isDeleteTrack) appDatabase.playlistTrackDao().deleteTrack(playlistTrackDbConvertor.map(track))
     }
 }

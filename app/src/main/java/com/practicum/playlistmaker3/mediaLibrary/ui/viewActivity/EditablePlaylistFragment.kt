@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -34,9 +34,10 @@ class EditablePlaylistFragment : PlayListFragment() {
         }
     }
 
-    @SuppressLint("NewApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            super.onViewCreated(view, savedInstanceState)
+        }
 
         binding.textNewPlaylist.text = getString(R.string.edit)
         binding.toCreatePlaylistButton.text = getString(R.string.save)
@@ -51,7 +52,7 @@ class EditablePlaylistFragment : PlayListFragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallBack)
 
         val playlist =
-            arguments?.getSerializable(CurrentPlaylistFragment.BUNGLE_KEY_EDIT) as Playlist
+            arguments?.getSerializable(CurrentPlaylistFragment.BUNDLE_KEY_EDIT) as Playlist
         viewModel.loadPlaylist(playlist)
 
         val pickMedia =

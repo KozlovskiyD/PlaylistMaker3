@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker3.mediaLibrary.ui.viewActivity
 
+import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -26,13 +28,12 @@ import com.practicum.playlistmaker3.util.getTrackNumber
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-@Suppress("CAST_NEVER_SUCCEEDS", "DEPRECATION")
+@Suppress("DEPRECATION")
 class CurrentPlaylistFragment : Fragment() {
 
     companion object {
-        const val BUNGLE_KEY = "bungle_key"
-        const val BUNGLE_KEY_EDIT = "bungle_key_edit"
-        fun newInstance() = NewPlaylistFragment()
+        const val BUNDLE_KEY = "bundle_key"
+        const val BUNDLE_KEY_EDIT = "bundle_key_edit"
     }
 
     private val viewModel by viewModel<CurrentPlaylistFragmentViewModel>()
@@ -54,15 +55,16 @@ class CurrentPlaylistFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCurrentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val playlist = arguments?.getSerializable(BUNGLE_KEY) as Playlist
+        val playlist = arguments?.getSerializable(BUNDLE_KEY) as Playlist
         playlistId = playlist.id!!
 
         val tracks = mutableListOf<Track>()
@@ -88,8 +90,7 @@ class CurrentPlaylistFragment : Fragment() {
         binding.imageCurrentPlaylist.setImageURI(file.toUri())
 
         binding.textBottomSheetEditPlaylist.text = playlist.namePlaylist
-        binding.textTrackSheetEditPlaylist.text =
-            String.format("%d %s", playlist.trackCount, getTrackNumber(playlist.trackCount))
+        binding.textTrackSheetEditPlaylist.text = "${playlist.trackCount} ${getTrackNumber(playlist.trackCount)}"
 
         Glide
             .with(binding.root.context)
@@ -138,27 +139,23 @@ class CurrentPlaylistFragment : Fragment() {
             boomSheetEdit.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
+        viewModel.observeStateMessage().observe(viewLifecycleOwner) { message ->
+            shareToApp(message)
+        }
+
         binding.buttonToShareCurrentPlaylist.setOnClickListener {
-            if (playlist.trackCount > 0) {
-                viewModel.showMessage(playlist, tracks)
-                viewModel.observeStateMessage().observe(viewLifecycleOwner) { message ->
-                    shareToApp(message)
-                }
-            } else showToast()
+            if (playlist.trackCount == 0) showToast()
+             else   viewModel.showMessage(playlist, tracks)
         }
 
         binding.textToShareCurrentPlaylist.setOnClickListener {
-            if (playlist.trackCount > 0) {
-                viewModel.showMessage(playlist, tracks)
-                viewModel.observeStateMessage().observe(viewLifecycleOwner) { message ->
-                    shareToApp(message)
-                }
-            } else showToast()
+            if (playlist.trackCount == 0) showToast()
+                else viewModel.showMessage(playlist, tracks)
         }
 
         binding.textEditInfoCurrentPlaylist.setOnClickListener {
             val bundle = Bundle()
-            bundle.putSerializable(BUNGLE_KEY_EDIT, playlist)
+            bundle.putSerializable(BUNDLE_KEY_EDIT, playlist)
             findNavController().navigate(
                 R.id.action_currentPlaylistFragment_to_editablePlaylistFragment,
                 bundle
@@ -174,7 +171,7 @@ class CurrentPlaylistFragment : Fragment() {
 
         viewModel.observeStateExit().observe(viewLifecycleOwner) {
             if (it) viewModel.deletePlaylist(playlist)
-                else backScreen()
+            else backScreen()
         }
 
         binding.back.setOnClickListener {
@@ -191,6 +188,8 @@ class CurrentPlaylistFragment : Fragment() {
             val bottomSheetBehavior =
                 BottomSheetBehavior.from(binding.bottomSheetTrackPlaylist)
             bottomSheetBehavior.peekHeight = buttonMenuHeightFromBottom
+
+
         }
     }
 
@@ -202,7 +201,20 @@ class CurrentPlaylistFragment : Fragment() {
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 viewModel.deleteTrack(track, playlistId)
             }
-            .show()
+            .show().apply {
+                getButton(DialogInterface.BUTTON_NEUTRAL)?.setTextColor(
+                    resources.getColor(
+                        R.color.blue,
+                        requireContext().theme
+                    )
+                )
+                getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(
+                    resources.getColor(
+                        R.color.blue,
+                        requireContext().theme
+                    )
+                )
+            }
     }
 
     private fun openDialogDeletePlaylist(playlist: Playlist) {
@@ -213,17 +225,35 @@ class CurrentPlaylistFragment : Fragment() {
             .setPositiveButton("Да") { _, _ ->
                 viewModel.deleteTracksPlaylist(playlist)
             }
-            .show()
+            .show().apply {
+                getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(
+                    resources.getColor(
+                        R.color.blue,
+                        requireContext().theme
+                    )
+                )
+                getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(
+                    resources.getColor(
+                        R.color.blue,
+                        requireContext().theme
+                    )
+                )
+            }
     }
 
     private fun shareToApp(message: String) {
-        Intent(Intent.ACTION_SEND).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, message)
-            requireContext().startActivity(this)
+        try {
+            Intent(Intent.ACTION_SEND).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, message)
+                requireContext().startActivity(this)
+            }
         }
-    }
+            catch (e: Throwable) {
+                Toast.makeText(requireContext(), resources.getString(R.string.no_app), Toast.LENGTH_LONG).show()
+            }
+        }
 
     private fun showToast() {
         val message = getString(R.string.do_not_share_message)
