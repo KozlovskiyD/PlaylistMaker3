@@ -21,7 +21,7 @@ class PlaylistDbConvertor(private var json: Gson) {
 
     fun map(playlist: PlaylistEntity): Playlist {
         return Playlist(
-            id = playlist.id,
+            id = playlist.id!!,
             namePlaylist = playlist.name,
             description = playlist.description,
             filePath = playlist.filePath,

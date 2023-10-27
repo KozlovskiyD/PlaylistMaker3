@@ -1,8 +1,8 @@
 package com.practicum.playlistmaker3.mediaLibrary.domain.impl
 
 import com.practicum.playlistmaker3.mediaLibrary.data.db.entity.TrackId
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteRepository
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.FavoriteRepository
 import com.practicum.playlistmaker3.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 

@@ -7,4 +7,4 @@ data class Playlist(
     var filePath: String? = null,
     val trackList: MutableList<Long> = mutableListOf(),
     var trackCount: Int = 0,
-)
+) : java.io.Serializable

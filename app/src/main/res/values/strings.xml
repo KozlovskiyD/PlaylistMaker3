@@ -39,4 +39,16 @@
     <string name="description_dialog_playlist">Все несохраненые даные будут потеряны</string>
     <string name="add_playlist">Добавлено в плейлист</string>
     <string name="already_added">Трек уже добвлен в плейлист </string>
+    <string name="to_share_playlist">Поделится</string>
+    <string name="edit_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="delete_track">Удалить трек</string>
+    <string name="sure_delete_track">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="delete">Удалить</string>
+    <string name="do_not_share_message">В этом плейлисте нет списка треков,\n которым можно поделиться</string>
+    <string name="want_delete_playlist">Хотите удалить плейлист?</string>
+    <string name="no_track_playlist">В этом плейлисте нет треков</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="no_app">Нет подходящих приложений</string>
 </resources>

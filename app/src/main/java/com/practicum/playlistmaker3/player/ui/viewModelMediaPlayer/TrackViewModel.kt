@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.FavoriteInteractor
-import com.practicum.playlistmaker3.mediaLibrary.domain.db.PlaylistInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.FavoriteInteractor
+import com.practicum.playlistmaker3.mediaLibrary.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker3.mediaLibrary.domain.models.Playlist
 import com.practicum.playlistmaker3.player.domain.api.MediaIteractor
 import com.practicum.playlistmaker3.player.domain.screenModel.ScreenMediaModel

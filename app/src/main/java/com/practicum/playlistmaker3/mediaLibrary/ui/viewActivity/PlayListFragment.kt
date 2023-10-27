@@ -29,6 +29,7 @@ import com.practicum.playlistmaker3.R
 import com.practicum.playlistmaker3.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker3.mediaLibrary.ui.viewModelMediaLibrary.PlaylistFragmentViewModel
 import com.practicum.playlistmaker3.player.ui.viewActivity.MediaActivity
+import com.practicum.playlistmaker3.util.hideTheKeyboard
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -36,18 +37,17 @@ import kotlin.random.Random
 
 
 @Suppress("DEPRECATION")
-class PlayListFragment : Fragment() {
+open class PlayListFragment : Fragment() {
 
-    private val viewModel by viewModel<PlaylistFragmentViewModel>()
+    protected open val viewModel by viewModel<PlaylistFragmentViewModel>()
 
     companion object {
-        fun newInstance() = PlayListFragment()
         const val PICTURES_DIR = "myPlaylistPictures"
         const val COVER_JPG = "_cover.jpg"
     }
 
     private var _binding: FragmentPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
 
     private var namePlaylist = ""
@@ -121,6 +121,7 @@ class PlayListFragment : Fragment() {
         }
 
         binding.toCreatePlaylistButton.setOnClickListener {
+            context?.hideTheKeyboard(binding.toCreatePlaylistButton)
             if (isActiveNameText && isClickAllowed) {
                 viewModel.clickDebounce()
                 namePlaylist = binding.editNamePlaylist.text.toString()
@@ -141,9 +142,8 @@ class PlayListFragment : Fragment() {
 
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
-            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            PICTURES_DIR
-        )
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), PICTURES_DIR)
+
         if (!filePath.exists()) {
             filePath.mkdir()
         }

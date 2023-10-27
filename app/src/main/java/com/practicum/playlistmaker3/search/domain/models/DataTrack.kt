@@ -17,3 +17,7 @@ data class Track(
 fun getCoverArtwork(art: String): String {
     return art.replaceAfterLast('/', "512x512bb.jpg")
 }
+
+fun getCoverArtwork60(art: String): String {
+    return art.replaceAfterLast('/', "60x60bb.jpg")
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <shape
+            android:shape="rectangle">
+            <corners android:radius="@dimen/top_8" />
+
+        </shape>
+    </item>
+    <item android:drawable="@drawable/vector_placeholder_big"
+        android:height="236dp"
+        android:width="234dp"
+        android:gravity="center">
+    </item>
+</layer-list>
